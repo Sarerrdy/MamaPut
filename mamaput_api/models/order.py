@@ -1,5 +1,4 @@
 from database import db
-from models.menu_order import MenuOrder
 
 
 class Order(db.Model):
@@ -12,24 +11,27 @@ class Order(db.Model):
     __tablename__ = "orders"
 
     order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    total_price = db.Column(db.Integer, nullable=False)
-    date_ordered = db.Column(db.DateTime, nullable=False)
+    total_price = db.Column(db.Float(precision=2), nullable=False)
+    date_ordered = db.Column(
+        db.DateTime, default=db.func.now(), nullable=False)
     expected_date_of_delivery = db.Column(db.DateTime)
     status = db.Column(db.String(), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     user = db.relationship("User", back_populates="orders")
 
-    # menu_id = db.Column(db.Integer, db.ForeignKey("menus.menu_id"))
-    # menus = db.relationship("Menu", back_populates="orders")
+    orderdetails = db.relationship(
+        'Order_Detail', back_populates='order')
 
-    menus = db.relationship(
-        'Menu', secondary=MenuOrder.__table__, back_populates='orders')
+    payment = db.relationship("Payment", back_populates="order")
+
+    shipping = db.relationship(
+        "Shipping", back_populates="order", uselist=False)
 
     def __repr__(self):
         return (
             f"**Order** "
-            f"order_id: {self.id} "
+            f"order_id: {self.order_id} "
             f"total_price: {self.total_price} "
             f"date_ordered: {self.date_ordered}"
             f"expected_date_of_delivery: {self.expected_date_of_delivery}"

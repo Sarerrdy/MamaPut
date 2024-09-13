@@ -13,9 +13,9 @@ class ReviewSchema(Schema):
 
     review_id = fields.Integer()
     content = fields.String()
-    rating = fields.Integer(allow_none=False)
+    rating = fields.Float(allow_none=False)
     has_reviewed = fields.Boolean(allow_none=False)
-    date_reviewed = fields.DateTime(allow_none=False)
+    date_reviewed = fields.DateTime(allow_none=True)
 
     menu = fields.Nested(UserSchema(), dump_only=True)
     reviewer = fields.Nested(MenuSchema(), dump_only=True)

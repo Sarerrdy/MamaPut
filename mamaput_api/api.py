@@ -11,6 +11,8 @@ from resources.category_resource import CategoriesResource, CATEGORIES_ENDPOINT
 from resources.menu_resource import MenusResource, MENUS_ENDPOINT
 from resources.order_resource import OrdersResource, ORDERS_ENDPOINT
 from resources.review_resource import ReviewsResource, REVIEW_ENDPOINT
+from resources.order_details_resource import OrderDetailsResource, \
+    ORDERDETAILS_ENDPOINT
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -50,11 +52,13 @@ def create_app(db_location):
                      f"{ORDERS_ENDPOINT}/<id>")
     api.add_resource(ReviewsResource, REVIEW_ENDPOINT,
                      f"{REVIEW_ENDPOINT}/<id>")
+    api.add_resource(OrderDetailsResource, ORDERDETAILS_ENDPOINT,
+                     f"{ORDERDETAILS_ENDPOINT}/<id>")
     return app
 
 
 if __name__ == "__main__":
     app = create_app(f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")
-    # with app.app_context():
-    #     db.create_all()
+    with app.app_context():
+        db.create_all()
     app.run(debug=True, port=5001)

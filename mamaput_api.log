@@ -1055,3 +1055,179 @@ werkzeug.exceptions.InternalServerError: 500 Internal Server Error: The server e
 09-11 23:26 resources.order_resource INFO     Retrieving orders by id 3
 09-11 23:26 resources.order_resource INFO     Order retrieved from database {'order_id': 3, 'total_price': 500.0, 'date_ordered': '2024-09-11T12:03:00', 'expected_date_of_delivery': '2024-09-11T21:11:00', 'status': 'out for delivery', 'user_id': 2, 'user': {'user_id': 2, 'title': 'mr', 'first_name': 'Samuel', 'last_name': 'Mikel', 'gender': 'male', 'email': 'samuelmikel@gmail.com', 'phone': 7038745740, 'join_date': '2024-09-10T13:42:34', 'user_url': 'samuel_mike_small_art'}, 'menus': [{'menu_id': 1, 'name': 'Afang', 'price': 500, 'status': 'Available', 'menu_url': 'afang/small.jpg', 'category_id': 1, 'category': {'category_id': 1, 'name': 'soups', 'category_url': '"soups/small_art.jpg"'}}]}
 09-11 23:26 werkzeug     INFO     127.0.0.1 - - [11/Sep/2024 23:26:19] "GET /api/orders/3 HTTP/1.1" 200 -
+09-13 00:19 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 00:19 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 00:19 werkzeug     INFO      * Restarting with stat
+09-13 00:19 werkzeug     WARNING   * Debugger is active!
+09-13 00:19 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:20 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 00:20 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 00:20 werkzeug     INFO      * Restarting with stat
+09-13 00:20 werkzeug     WARNING   * Debugger is active!
+09-13 00:20 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:23 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 00:23 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 00:23 werkzeug     INFO      * Restarting with stat
+09-13 00:23 werkzeug     WARNING   * Debugger is active!
+09-13 00:23 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:26 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/schemas/order_details_schema.py', reloading
+09-13 00:26 werkzeug     INFO      * Restarting with stat
+09-13 00:26 werkzeug     WARNING   * Debugger is active!
+09-13 00:26 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:26 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/schemas/order_details_schema.py', reloading
+09-13 00:26 werkzeug     INFO      * Restarting with stat
+09-13 00:26 werkzeug     WARNING   * Debugger is active!
+09-13 00:26 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:26 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/schemas/order_details_schema.py', reloading
+09-13 00:26 werkzeug     INFO      * Restarting with stat
+09-13 00:26 werkzeug     WARNING   * Debugger is active!
+09-13 00:26 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:26 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/schemas/order_details_schema.py', reloading
+09-13 00:26 werkzeug     INFO      * Restarting with stat
+09-13 00:26 werkzeug     WARNING   * Debugger is active!
+09-13 00:26 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:26 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/schemas/order_details_schema.py', reloading
+09-13 00:26 werkzeug     INFO      * Restarting with stat
+09-13 00:26 werkzeug     WARNING   * Debugger is active!
+09-13 00:26 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:26 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/schemas/order_details_schema.py', reloading
+09-13 00:26 werkzeug     INFO      * Restarting with stat
+09-13 00:26 werkzeug     WARNING   * Debugger is active!
+09-13 00:26 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:27 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 00:27 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 00:27 werkzeug     INFO      * Restarting with stat
+09-13 00:27 werkzeug     WARNING   * Debugger is active!
+09-13 00:27 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:57 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 00:57 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 00:57 werkzeug     INFO      * Restarting with stat
+09-13 00:57 werkzeug     WARNING   * Debugger is active!
+09-13 00:57 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 00:58 resources.order_resource INFO     Retrieving all orders, optionally filtered by status=None
+09-13 00:58 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 00:58:29] "[35m[1mGET /api/orders HTTP/1.1[0m" 500 -
+09-13 00:58 resources.user_resource INFO     Retrieving all usersNone
+09-13 00:58 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 00:58:41] "[35m[1mGET /api/users HTTP/1.1[0m" 500 -
+09-13 01:17 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 01:17 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 01:17 werkzeug     INFO      * Restarting with stat
+09-13 01:17 werkzeug     WARNING   * Debugger is active!
+09-13 01:17 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:18 resources.user_resource INFO     Retrieving all usersNone
+09-13 01:18 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:18:04] "[35m[1mGET /api/users HTTP/1.1[0m" 500 -
+09-13 01:23 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/models/menu.py', reloading
+09-13 01:23 werkzeug     INFO      * Restarting with stat
+09-13 01:23 werkzeug     WARNING   * Debugger is active!
+09-13 01:23 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:24 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 01:24 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 01:24 werkzeug     INFO      * Restarting with stat
+09-13 01:24 werkzeug     WARNING   * Debugger is active!
+09-13 01:24 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:24 resources.user_resource INFO     Retrieving all usersNone
+09-13 01:24 resources.user_resource INFO     Users successfully retrieved.
+09-13 01:24 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:24:58] "GET /api/users HTTP/1.1" 200 -
+09-13 01:25 resources.user_resource INFO     Retrieving user by id 1
+09-13 01:25 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:25:07] "[33mGET /api/users/1 HTTP/1.1[0m" 404 -
+09-13 01:25 resources.address_resource INFO     Retrieving all addresses, optionally filtered by user_id=None
+09-13 01:25 resources.address_resource INFO     Address successfully retrieved.
+09-13 01:25 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:25:26] "GET /api/addresses HTTP/1.1" 200 -
+09-13 01:25 resources.category_resource INFO     Retrieving all categoriesNone
+09-13 01:25 resources.category_resource INFO     categories successfully retrieved.
+09-13 01:25 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:25:39] "GET /api/categories HTTP/1.1" 200 -
+09-13 01:25 resources.menu_resource INFO     Retrieving all addresses, optionally filtered by status=None
+09-13 01:25 resources.menu_resource INFO     Menu successfully retrieved.
+09-13 01:25 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:25:56] "GET /api/menus HTTP/1.1" 200 -
+09-13 01:26 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:26:07] "[33mGET /api/reviews HTTP/1.1[0m" 404 -
+09-13 01:26 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:26:26] "[33mGET /api/reviews/1 HTTP/1.1[0m" 404 -
+09-13 01:27 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:27:23] "[33mGET /api/order_details HTTP/1.1[0m" 404 -
+09-13 01:27 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:27:34] "[33mGET /api/order_details/1 HTTP/1.1[0m" 404 -
+09-13 01:28 resources.address_resource INFO     Retrieving all addresses, optionally filtered by user_id=None
+09-13 01:28 resources.address_resource INFO     Address successfully retrieved.
+09-13 01:28 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:28:08] "GET /api/addresses HTTP/1.1" 200 -
+09-13 01:29 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 01:29 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 01:29 werkzeug     INFO      * Restarting with stat
+09-13 01:29 werkzeug     WARNING   * Debugger is active!
+09-13 01:29 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:30 resources.address_resource INFO     Retrieving all addresses, optionally filtered by user_id=None
+09-13 01:30 resources.address_resource INFO     Address successfully retrieved.
+09-13 01:30 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:30:02] "GET /api/addresses HTTP/1.1" 200 -
+09-13 01:30 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:30:08] "[33mGET /api/order_details HTTP/1.1[0m" 404 -
+09-13 01:30 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:30:14] "[33mGET /api/order_details/1 HTTP/1.1[0m" 404 -
+09-13 01:31 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/models/menu.py', reloading
+09-13 01:31 werkzeug     INFO      * Restarting with stat
+09-13 01:40 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 01:40 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 01:40 werkzeug     INFO      * Restarting with stat
+09-13 01:40 werkzeug     WARNING   * Debugger is active!
+09-13 01:40 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:42 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:42:01] "[33mGET /api/mens/1 HTTP/1.1[0m" 404 -
+09-13 01:42 resources.menu_resource INFO     Retrieving menus by id 1
+09-13 01:42 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:42:08] "[33mGET /api/menus/1 HTTP/1.1[0m" 404 -
+09-13 01:43 resources.order_details_resource INFO     Retrieving all orderDetailss, optionally filtered by status=None
+09-13 01:43 resources.order_details_resource INFO     Orders successfully retrieved.
+09-13 01:43 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:43:07] "GET /api/orderdetails HTTP/1.1" 200 -
+09-13 01:43 resources.order_details_resource INFO     Retrieving orders by id 1
+09-13 01:43 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:43:13] "[33mGET /api/orderdetails/1 HTTP/1.1[0m" 404 -
+09-13 01:45 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/models/user.py', reloading
+09-13 01:45 werkzeug     INFO      * Restarting with stat
+09-13 01:47 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 01:47 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 01:47 werkzeug     INFO      * Restarting with stat
+09-13 01:47 werkzeug     WARNING   * Debugger is active!
+09-13 01:47 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:47 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:47:34] "[33mGET /api/user/1 HTTP/1.1[0m" 404 -
+09-13 01:47 resources.user_resource INFO     Retrieving user by id 1
+09-13 01:47 resources.user_resource INFO     User retrieved from database {'user_id': 1, 'title': 'mr', 'first_name': 'Edmond', 'last_name': 'Ina', 'gender': 'male', 'email': 'sarerrdy4live', 'phone': 7038745740, 'join_date': '2024-09-13T01:46:25', 'user_url': '/edmond_ina_small'}
+09-13 01:47 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:47:42] "GET /api/users/1 HTTP/1.1" 200 -
+09-13 01:49 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 01:49 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 01:49 werkzeug     INFO      * Restarting with stat
+09-13 01:49 werkzeug     WARNING   * Debugger is active!
+09-13 01:49 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:52 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 01:52 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 01:52 werkzeug     INFO      * Restarting with stat
+09-13 01:52 werkzeug     WARNING   * Debugger is active!
+09-13 01:52 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:55 resources.user_resource INFO     Retrieving user by id 1
+09-13 01:55 resources.user_resource INFO     User retrieved from database {'user_id': 1, 'title': 'Mr', 'first_name': 'Edmond', 'last_name': 'Ina', 'gender': 'Maile', 'email': 'sarerrdy@gmail.com', 'phone': 7038745740, 'join_date': None, 'user_url': '/test/eedy'}
+09-13 01:55 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:55:42] "GET /api/users/1 HTTP/1.1" 200 -
+09-13 01:56 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 01:56 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 01:56 werkzeug     INFO      * Restarting with stat
+09-13 01:56 werkzeug     WARNING   * Debugger is active!
+09-13 01:56 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 01:58 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:58:05] "[35m[1mPOST /api/users/1 HTTP/1.1[0m" 500 -
+09-13 01:59 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 01:59:56] "[35m[1mPOST /api/users HTTP/1.1[0m" 500 -
+09-13 02:01 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 02:01:41] "[35m[1mPOST /api/users HTTP/1.1[0m" 500 -
+09-13 02:04 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 02:04:02] "[35m[1mPOST /api/users HTTP/1.1[0m" 201 -
+09-13 02:05 resources.user_resource INFO     Retrieving all usersNone
+09-13 02:05 resources.user_resource INFO     Users successfully retrieved.
+09-13 02:05 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 02:05:33] "GET /api/users HTTP/1.1" 200 -
+09-13 16:13 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/models/menu.py', reloading
+09-13 16:13 werkzeug     INFO      * Restarting with stat
+09-13 16:13 werkzeug     WARNING   * Debugger is active!
+09-13 16:13 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 16:14 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/models/menu.py', reloading
+09-13 16:14 werkzeug     INFO      * Restarting with stat
+09-13 16:14 werkzeug     WARNING   * Debugger is active!
+09-13 16:14 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 16:14 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/models/menu.py', reloading
+09-13 16:14 werkzeug     INFO      * Restarting with stat
+09-13 16:14 werkzeug     WARNING   * Debugger is active!
+09-13 16:14 werkzeug     INFO      * Debugger PIN: 686-091-825

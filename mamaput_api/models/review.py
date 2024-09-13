@@ -14,7 +14,8 @@ class Review(db.Model):
     content = db.Column(db.Text)
     rating = db.Column(db.Integer, nullable=False)
     has_reviewed = db.Column(db.Boolean, nullable=False)
-    date_reviewed = db.Column(db.DateTime, nullable=False)
+    date_reviewed = db.Column(
+        db.DateTime,  default=db.func.now(), nullable=False)
 
     menu_id = db.Column(db.Integer, db.ForeignKey('menus.menu_id'))
     menu = db.relationship("Menu", back_populates="reviews")

@@ -1,5 +1,5 @@
 from database import db
-from models.menu_order import MenuOrder
+# from models.menu_order import MenuOrder
 
 
 class Menu(db.Model):
@@ -13,7 +13,9 @@ class Menu(db.Model):
 
     menu_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(), nullable=False)
+    price = db.Column(db.Float(precision=2), nullable=False)
+    stock_quantity = db.Column(db.Integer, nullable=True)
     status = db.Column(db.String(), nullable=False)
     menu_url = db.Column(db.String(), nullable=False)
 
@@ -22,11 +24,10 @@ class Menu(db.Model):
     category = db.relationship("Category", back_populates="menus")
     reviews = db.relationship("Review", back_populates="menu")
 
-    # order_id = db.Column(db.Integer, db.ForeignKey(
-    #     'orders.order_id'), nullable=False)
-    # orders = db.relationship('Order', back_populates='menus')
-    orders = db.relationship(
-        'Order', secondary=MenuOrder.__table__, back_populates='menus')
+    # orders = db.relationship(
+    #     'Order', secondary=MenuOrder.__table__, back_populates='menus')
+    orderdetails = db.relationship(
+        'Order_Detail', back_populates='menu')
 
     def __repr__(self):
         return (
