@@ -18,7 +18,7 @@ class Payment(db.Model):
         db.DateTime, default=db.func.now(), nullable=True)
 
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'))
-    order = db.relationship("Order", back_populates="payment")
+    order = db.relationship("Order", back_populates="payment", uselist=False)
 
     def __repr__(self):
         return (

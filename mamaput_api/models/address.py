@@ -20,8 +20,8 @@ class Address(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     user = db.relationship("User", back_populates="addresses")
 
-    shipping = db.relationship(
-        "Shipping", back_populates="address", uselist=False)
+    shipping_info = db.relationship(
+        "ShippingInfo", back_populates="address", uselist=False)
 
     def __repr__(self):
         return (

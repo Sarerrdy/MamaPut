@@ -1231,3 +1231,88 @@ werkzeug.exceptions.InternalServerError: 500 Internal Server Error: The server e
 09-13 16:14 werkzeug     INFO      * Restarting with stat
 09-13 16:14 werkzeug     WARNING   * Debugger is active!
 09-13 16:14 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 18:55 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 18:55 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 18:55 werkzeug     INFO      * Restarting with stat
+09-13 18:55 werkzeug     WARNING   * Debugger is active!
+09-13 18:55 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 20:28 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 20:28 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 20:28 werkzeug     INFO      * Restarting with stat
+09-13 20:28 werkzeug     WARNING   * Debugger is active!
+09-13 20:28 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 20:30 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 20:30 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 20:30 werkzeug     INFO      * Restarting with stat
+09-13 20:30 werkzeug     WARNING   * Debugger is active!
+09-13 20:30 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 20:32 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/api.py', reloading
+09-13 20:32 werkzeug     INFO      * Restarting with stat
+09-13 20:50 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 20:50 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 20:50 werkzeug     INFO      * Restarting with stat
+09-13 20:50 werkzeug     WARNING   * Debugger is active!
+09-13 20:50 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 20:52 resources.user_resource INFO     Retrieving all usersNone
+09-13 20:52 resources.user_resource INFO     Users successfully retrieved.
+09-13 20:52 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 20:52:06] "GET /api/users HTTP/1.1" 200 -
+09-13 20:52 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 20:52:16] "[33mGET /api/payment HTTP/1.1[0m" 404 -
+09-13 20:52 resources.payment_resource INFO     Retrieving all payments, optionally filtered by order_id=None
+09-13 20:52 resources.payment_resource INFO     Payment successfully retrieved.
+09-13 20:52 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 20:52:22] "GET /api/payments HTTP/1.1" 200 -
+09-13 20:52 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 20:52:46] "[33mGET /api/shipping HTTP/1.1[0m" 404 -
+09-13 20:52 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 20:52:56] "[33mGET /api/shipping_info HTTP/1.1[0m" 404 -
+09-13 21:59 werkzeug     INFO     [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+09-13 21:59 werkzeug     INFO     [33mPress CTRL+C to quit[0m
+09-13 21:59 werkzeug     INFO      * Restarting with stat
+09-13 21:59 werkzeug     WARNING   * Debugger is active!
+09-13 21:59 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 21:59 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 21:59:38] "[33mGET /api/shipping_info HTTP/1.1[0m" 404 -
+09-13 21:59 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 21:59:44] "[33mGET /api/shipping_info/1 HTTP/1.1[0m" 404 -
+09-13 22:00 resources.shipping_info_resource INFO     Retrieving shipping by id: 1
+09-13 22:00 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:00:24] "[35m[1mGET /api/shipping_infos/1 HTTP/1.1[0m" 500 -
+09-13 22:00 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:00:32] "[33mGET /api/shipping_infos/ HTTP/1.1[0m" 404 -
+09-13 22:00 resources.shipping_info_resource INFO     Retrieving all shipping_info, optionally filtered by order_id=None
+09-13 22:00 resources.shipping_info_resource INFO     ShippingInfo successfully retrieved.
+09-13 22:00 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:00:58] "GET /api/shipping_infos HTTP/1.1" 200 -
+09-13 22:01 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:01:05] "[33mGET /api/shipping_infos/ HTTP/1.1[0m" 404 -
+09-13 22:01 resources.shipping_info_resource INFO     Retrieving shipping by id: 1
+09-13 22:01 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:01:12] "[35m[1mGET /api/shipping_infos/1 HTTP/1.1[0m" 500 -
+09-13 22:02 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/resources/shipping_info_resource.py', reloading
+09-13 22:02 werkzeug     INFO      * Restarting with stat
+09-13 22:02 werkzeug     WARNING   * Debugger is active!
+09-13 22:02 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 22:02 werkzeug     INFO      * Detected change in '/home/sarerrdy/Portfolio-Proj/mama_put/mamaput_api/resources/shipping_info_resource.py', reloading
+09-13 22:02 werkzeug     INFO      * Restarting with stat
+09-13 22:02 werkzeug     WARNING   * Debugger is active!
+09-13 22:02 werkzeug     INFO      * Debugger PIN: 686-091-825
+09-13 22:02 resources.shipping_info_resource INFO     Retrieving shipping by id: 1
+09-13 22:02 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:02:53] "[33mGET /api/shipping_infos/1 HTTP/1.1[0m" 404 -
+09-13 22:03 resources.payment_resource INFO     Retrieving payment by id 1
+09-13 22:03 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:03:13] "[33mGET /api/payments/1 HTTP/1.1[0m" 404 -
+09-13 22:03 resources.payment_resource INFO     Retrieving all payments, optionally filtered by order_id=None
+09-13 22:03 resources.payment_resource INFO     Payment successfully retrieved.
+09-13 22:03 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:03:19] "GET /api/payments HTTP/1.1" 200 -
+09-13 22:03 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:03:23] "[33mGET /api/payments/ HTTP/1.1[0m" 404 -
+09-13 22:03 resources.payment_resource INFO     Retrieving all payments, optionally filtered by order_id=None
+09-13 22:03 resources.payment_resource INFO     Payment successfully retrieved.
+09-13 22:03 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:03:29] "GET /api/payments HTTP/1.1" 200 -
+09-13 22:03 resources.cart_resource INFO     Retrieving all carts, optionally filtered by user_id=None
+09-13 22:03 resources.cart_resource INFO     Cart successfully retrieved.
+09-13 22:03 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:03:48] "GET /api/carts HTTP/1.1" 200 -
+09-13 22:03 resources.cart_resource INFO     Retrieving cart by id 1
+09-13 22:03 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:03:55] "[33mGET /api/carts/1 HTTP/1.1[0m" 404 -
+09-13 22:04 resources.cart_resource INFO     Retrieving all carts, optionally filtered by user_id=1
+09-13 22:04 resources.cart_resource INFO     Cart successfully retrieved.
+09-13 22:04 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:04:13] "GET /api/carts?user_id=1 HTTP/1.1" 200 -
+09-13 22:04 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:04:33] "[33mGET /api/order_details HTTP/1.1[0m" 404 -
+09-13 22:04 resources.order_details_resource INFO     Retrieving all orderDetailss, optionally filtered by status=None
+09-13 22:04 resources.order_details_resource INFO     Orders successfully retrieved.
+09-13 22:04 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:04:55] "GET /api/orderdetails HTTP/1.1" 200 -
+09-13 22:04 resources.order_details_resource INFO     Retrieving orders by id 1
+09-13 22:04 werkzeug     INFO     127.0.0.1 - - [13/Sep/2024 22:04:59] "[33mGET /api/orderdetails/1 HTTP/1.1[0m" 404 -

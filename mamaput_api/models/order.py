@@ -25,8 +25,8 @@ class Order(db.Model):
 
     payment = db.relationship("Payment", back_populates="order")
 
-    shipping = db.relationship(
-        "Shipping", back_populates="order", uselist=False)
+    shipping_info = db.relationship(
+        "ShippingInfo", back_populates="order", uselist=False)
 
     def __repr__(self):
         return (

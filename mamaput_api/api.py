@@ -11,6 +11,10 @@ from resources.category_resource import CategoriesResource, CATEGORIES_ENDPOINT
 from resources.menu_resource import MenusResource, MENUS_ENDPOINT
 from resources.order_resource import OrdersResource, ORDERS_ENDPOINT
 from resources.review_resource import ReviewsResource, REVIEW_ENDPOINT
+from resources.payment_resource import PaymentsResource, PAYMENT_ENDPOINT
+from resources.cart_resource import CartsResource, CART_ENDPOINT
+from resources.shipping_info_resource import ShippingInfoResource, \
+    SHIPPING_ENDPOINT
 from resources.order_details_resource import OrderDetailsResource, \
     ORDERDETAILS_ENDPOINT
 
@@ -54,6 +58,12 @@ def create_app(db_location):
                      f"{REVIEW_ENDPOINT}/<id>")
     api.add_resource(OrderDetailsResource, ORDERDETAILS_ENDPOINT,
                      f"{ORDERDETAILS_ENDPOINT}/<id>")
+    api.add_resource(PaymentsResource, PAYMENT_ENDPOINT,
+                     f"{PAYMENT_ENDPOINT}/<id>")
+    api.add_resource(ShippingInfoResource, SHIPPING_ENDPOINT,
+                     f"{SHIPPING_ENDPOINT}/<id>")
+    api.add_resource(CartsResource, CART_ENDPOINT,
+                     f"{CART_ENDPOINT}/<id>")
     return app
 
 

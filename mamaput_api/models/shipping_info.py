@@ -1,16 +1,17 @@
 from database import db
 
 
-class Shipping(db.Model):
+class ShippingInfo(db.Model):
     """
-    Shipping Flask-SQLAlchemy Model
+    shipping_info Flask-SQLAlchemy Model
 
-    Represents objects contained in the Shipping table
+    Represents objects contained in the shipping_info table
     """
 
-    __tablename__ = "shippings"
+    __tablename__ = "shipping_info"
 
-    shipping_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    shipping_info_id = db.Column(
+        db.Integer, primary_key=True, autoincrement=True)
 
     shipping_Method = db.Column(db.String(), nullable=False)
     shipping_cost = db.Column(db.Float(precision=2), nullable=False)
@@ -21,20 +22,17 @@ class Shipping(db.Model):
         db.DateTime, nullable=False)
 
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'))
-    order = db.relationship("Order", back_populates="shipping", uselist=False)
+    order = db.relationship(
+        "Order", back_populates="shipping_info", uselist=False)
 
     address_id = db.Column(db.Integer, db.ForeignKey('addresses.address_id'))
     address = db.relationship(
-        "Address", back_populates="shipping", uselist=False)
-
-    shipper_id = db.Column(db.Integer, db.ForeignKey('shippers.shipper_id'))
-    shipper = db.relationship(
-        "Shipper", back_populates="shipping", uselist=False)
+        "Address", back_populates="shipping_info", uselist=False)
 
     def __repr__(self):
         return (
-            f"**Shipping** "
-            f"shipping_id: {self.shipping_id} "
+            f"**ShippingInfo** "
+            f"shipping_info_id: {self.shipping_info_id} "
             f"order_id: {self.order_id} "
             f"address_id: {self.address_id}"
             f"shipper_id: {self.shipper_id} "
@@ -43,5 +41,5 @@ class Shipping(db.Model):
             f"shipping_status: {self.shipping_status}"
             f"shipped_date: {self.shipped_date}"
             f"expected_delivery_date: {self.expected_delivery_date}"
-            f"**Shipping** "
+            f"**ShippingInfo** "
         )
