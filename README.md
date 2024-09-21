@@ -25,6 +25,7 @@ Development is still in progress
 
 - [Python 3.11 or above installed](https://realpython.com/installing-python/)
 - [pipenv](https://pipenv-fork.readthedocs.io/en/latest/install.html#installing-pipenv)
+- Marshmallow Schemas
 - check the pipfile for other requirements
 
 ## How to Run
