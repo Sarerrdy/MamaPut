@@ -1,8 +1,7 @@
-#### Building MamaPut Web-App RESTful API with Flask, Flask-RESTful, SQLAlchemy and pytest
+# MamaPut Api
 
----
-
-This is the source-code for my [Building a RESTful API with Flask, Flask-RESTful, SQLAlchemy and pytest](https://ericbernier.com/flask-restful-api) blog post. This post assumes you have [Python 3 installed](https://realpython.com/installing-python/), as well as [pipenv](https://pipenv-fork.readthedocs.io/en/latest/install.html#installing-pipenv). Please read the post for further details.
+This is a RESTful API created with Flask, Flask-RESTful, SQLAlchemy and sqlite and pytest
+It is meant to searve this [**React.js frontend App**](https://github.com/Sarerrdy/mamaputapp.git)
 
 ## Requirements
 
