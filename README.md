@@ -3,6 +3,9 @@
 This is a RESTful API created with Flask, Flask-RESTful, SQLAlchemy and sqlite and pytest
 It is meant to searve this [**React.js frontend App**](https://github.com/Sarerrdy/mamaputapp.git)
 
+## Progress
+Development is still in progress
+
 ## Requirements
 
 - [Python 3.11 or above installed](https://realpython.com/installing-python/)
