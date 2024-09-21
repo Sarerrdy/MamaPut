@@ -3,6 +3,21 @@
 This is a RESTful API created with Flask, Flask-RESTful, SQLAlchemy and sqlite and pytest
 It is meant to searve this [**React.js frontend App**](https://github.com/Sarerrdy/mamaputapp.git)
 
+## Features
+- api should be restful
+- support cross origin
+- secured access to only authenticated users
+- create user
+- create food menus
+- create categories of food menus
+- create orders
+- handle payments
+- handle shipping
+- create user reviews
+- manage all relationships
+- deploy to MySql
+- Host api
+
 ## Progress
 Development is still in progress
 
