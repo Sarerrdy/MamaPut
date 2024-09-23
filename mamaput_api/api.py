@@ -1,10 +1,14 @@
 from constants import PROJECT_ROOT, MAMAPUT_DATABASE
+from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flask import Flask
 import logging
 import sys
 from os import path
 from database import db
+
+
 from resources.user_resource import UsersResource, USERS_ENDPOINT
 from resources.address_resource import AddressesResource, ADDRESSES_ENDPOINT
 from resources.category_resource import CategoriesResource, CATEGORIES_ENDPOINT
@@ -40,7 +44,12 @@ def create_app(db_location):
     )
 
     app = Flask(__name__)
+    app.config['SECRET_KEY'] = 'QZ0_IC8I_I1ueVP9Gl5bNUZbFv2hyfkcuOhWVfAWfUQ'
+    # CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app, resources={
+         r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
     app.config["SQLALCHEMY_DATABASE_URI"] = db_location
+    JWTManager(app)
     db.init_app(app)
 
     api = Api(app)

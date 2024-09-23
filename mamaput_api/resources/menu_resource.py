@@ -39,6 +39,8 @@ class MenusResource(Resource):
         except NoResultFound:
             abort(404, message="menu not found")
 
+    # get endpoint for single items
+
     def _get_menu_by_id(self, menu_id):
         """retrieve menu by menu id"""
         menu = Menu.query.filter_by(menu_id=menu_id).first()
@@ -49,6 +51,8 @@ class MenusResource(Resource):
 
         logger.info(f"Menu retrieved from database {menu_json}")
         return menu_json
+
+    # get endpoint for all items
 
     def _get_all_menus(self, status):
         """retrieve all menus"""
@@ -62,6 +66,8 @@ class MenusResource(Resource):
 
         logger.info("Menu successfully retrieved.")
         return menus_json
+
+    # post endpoint
 
     def post(self):
         """
@@ -83,3 +89,58 @@ class MenusResource(Resource):
             abort(500, message="Unexpected Error!")
         else:
             return menu.menu_id, 201
+
+    # delete endpoint
+
+    def delete(self, menu_id):
+        """
+        MenusResource DELETE method. Deletes a menu item from the database.
+
+        :param menu_id: ID of the menu item to delete.
+        :return: 200 HTTP status code if successful, 404 if not found.
+        """
+        menu = Menu.query.filter_by(menu_id=menu_id).first()
+        if menu is None:
+            abort(404, message="Menu item not found!")
+
+        try:
+            db.session.delete(menu)
+            db.session.commit()
+        except IntegrityError as e:
+            logger.warning(
+                f"Integrity Error, could not delete menu item. "
+                f"Error: {e}"
+            )
+            abort(500, message="Unexpected Error!")
+        else:
+            logger.info({'Menu item deleted successfully'})
+            return menu.menu_id, 200
+
+    # Put endpoint
+
+    def put(self, menu_id):
+        """
+        MenusResource PUT method. Updates a menu item in the database.
+
+        :param menu_id: ID of the menu item to update.
+        :return: Updated menu item JSON, 200 HTTP status code if successful,
+        404 if not found.
+        """
+        menu = Menu.query.filter_by(menu_id=menu_id).first()
+        if menu is None:
+            abort(404, message="Menu item not found!")
+
+        try:
+            menu_data = request.get_json()
+            menu = MenuSchema().load(menu_data, instance=menu, partial=True)
+            db.session.commit()
+        # except ValidationError as err:
+        #     abort(400, message=err.messages)
+        except IntegrityError as e:
+            logger.warning(
+                f"Integrity Error, could not update menu item. "
+                f"Error: {e}"
+            )
+            abort(500, message="Unexpected Error!")
+        else:
+            return (MenuSchema().dump(menu)), 200

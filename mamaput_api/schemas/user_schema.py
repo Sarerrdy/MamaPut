@@ -15,6 +15,7 @@ class UserSchema(Schema):
     last_name = fields.String(allow_none=False)
     gender = fields.String(allow_none=False)
     email = fields.Email(allow_none=False)
+    password = fields.String(allow_none=False)
     phone = fields.Integer(allow_none=False)
     join_date = fields.DateTime(allow_none=True)
     user_url = fields.Url(allow_none=False)

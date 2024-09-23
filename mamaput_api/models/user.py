@@ -16,6 +16,7 @@ class User(db.Model):
     last_name = db.Column(db.String(), nullable=False)
     gender = db.Column(db.String(), nullable=False)
     email = db.Column(db.String(), nullable=False)
+    password = db.Column(db.String(), nullable=False)
     phone = db.Column(db.Integer, nullable=False)
     join_date = db.Column(db.DateTime,  default=db.func.now(), nullable=True)
     user_url = db.Column(db.String(), nullable=False)
