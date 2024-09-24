@@ -45,9 +45,9 @@ def create_app(db_location):
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'QZ0_IC8I_I1ueVP9Gl5bNUZbFv2hyfkcuOhWVfAWfUQ'
-    # CORS(app, resources={r"/api/*": {"origins": "*"}})
-    CORS(app, resources={
-         r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # CORS(app, resources={
+    #      r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
     app.config["SQLALCHEMY_DATABASE_URI"] = db_location
     JWTManager(app)
     db.init_app(app)

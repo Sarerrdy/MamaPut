@@ -21,7 +21,8 @@ class User(db.Model):
     join_date = db.Column(db.DateTime,  default=db.func.now(), nullable=True)
     user_url = db.Column(db.String(), nullable=False)
 
-    addresses = db.relationship("Address", back_populates="user")
+    addresses = db.relationship(
+        "Address", back_populates="user", lazy=True)
     cart = db.relationship("Cart", back_populates="user", uselist=False)
     orders = db.relationship("Order", back_populates="user")
     menu_reviewer = db.relationship(

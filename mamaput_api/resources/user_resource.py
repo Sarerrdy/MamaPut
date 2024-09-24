@@ -1,4 +1,5 @@
 import logging
+import json
 
 from flask import request, jsonify
 from flask_restful import Resource
@@ -8,8 +9,10 @@ from sqlalchemy.orm.exc import NoResultFound
 
 # from database import db
 from models.user import User
-from schemas.user_schema import UserSchema
+from models.address import Address
+# from schemas.user_schema import UserSchema
 # from schemas.login_schema import LoginSchema
+from schemas.user_rel_schemas import UserSchema, AddressSchema
 
 
 from flask_httpauth import HTTPBasicAuth
@@ -51,13 +54,26 @@ class UsersResource(Resource):
         logger.info(
             f"User retrieved from database by email: {email} and password: {password}")
         verified_user = verify_password(email, password)
+        address = Address.query.filter_by(
+            user_id=verified_user.user_id).first()
+        address_json = AddressSchema().dump(address)
+        # verified_user.address = address_json
         user_json = UserSchema().dump(verified_user)
+
+        # new = User.query.get(1)
+        # addresses = []
+        # for adr in new.addresses:
+        #     addresses.append
+        #     logger.info(f"adr: {adr}")
+        #     logger.info(f"converted: {json.dumps(adr)}")
+        # j_addr = json.dumps(addresses)
+        # logger.info(f"serilized: {j_addr}")
 
         if not verified_user:
             raise NoResultFound()
-        logger.info(f"User retrieved from database {user_json}")
+        logger.info(f"User retrieved from database {address_json}")
         logger.info(f"Token retrieved from database {token}")
-        return [token, user_json], 200
+        return [token, user_json, address_json], 200
         # resp = [token, user]
         # return (resp), 200
 

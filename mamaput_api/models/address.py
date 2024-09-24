@@ -18,7 +18,7 @@ class Address(db.Model):
     landmark = db.Column(db.String())
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    user = db.relationship("User", back_populates="addresses")
+    user = db.relationship("User", back_populates="addresses", lazy="noload")
 
     shipping_info = db.relationship(
         "ShippingInfo", back_populates="address", uselist=False)
