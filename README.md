@@ -1,6 +1,6 @@
 # MamaPut Api
 
-This is a RESTful API created with Flask, Flask-RESTful, SQLAlchemy and sqlite and pytest
+This is a RESTful API created with Flask, Flask-RESTful, SQLAlchemy, sqlite, Marshmallow Schemas and tested with pytest.
 It is meant to searve this [**React.js frontend App**](https://github.com/Sarerrdy/mamaputapp.git)
 
 ## Features
