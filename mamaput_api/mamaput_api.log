@@ -27518,3 +27518,7 @@ werkzeug.exceptions.InternalServerError: 500 Internal Server Error: The server e
 10-04 21:56 resources.menu_resource INFO     Retrieving all addresses, optionally filtered by status=None
 10-04 21:56 resources.menu_resource INFO     Menu successfully retrieved.
 10-04 21:56 werkzeug     INFO     127.0.0.1 - - [04/Oct/2024 21:56:22] "GET /api/menus HTTP/1.1" 200 -
+10-04 22:00 werkzeug     INFO     127.0.0.1 - - [04/Oct/2024 22:00:15] "OPTIONS /api/menus HTTP/1.1" 200 -
+10-04 22:00 resources.menu_resource INFO     Retrieving all addresses, optionally filtered by status=None
+10-04 22:00 resources.menu_resource INFO     Menu successfully retrieved.
+10-04 22:00 werkzeug     INFO     127.0.0.1 - - [04/Oct/2024 22:00:15] "GET /api/menus HTTP/1.1" 200 -
