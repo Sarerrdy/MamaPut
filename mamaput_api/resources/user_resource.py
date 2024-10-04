@@ -1,13 +1,14 @@
 import logging
-import json
+from datetime import datetime
+import time
 
-from flask import request, jsonify
-from flask_restful import Resource
+from flask import request, jsonify, g
+from flask_restful import Resource, current_app, abort
 # from flask_restful import Resource, abort
-# from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-# from database import db
+from database import db
 from models.user import User
 from models.address import Address
 # from schemas.user_schema import UserSchema
@@ -16,10 +17,10 @@ from schemas.user_rel_schemas import UserSchema, AddressSchema
 
 
 from flask_httpauth import HTTPBasicAuth
-# from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 # from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_jwt_extended import create_access_token
+import jwt
 
 
 USERS_ENDPOINT = "/api/users"
@@ -31,8 +32,28 @@ auth = HTTPBasicAuth()
 def verify_password(email, password):
     user = User.query.filter_by(email=email).first()
     if user and check_password_hash(user.password, password):
+        g.user = user
         return user
     return None
+
+
+def verify_auth_token(token):
+    try:
+        data = jwt.decode(token, current_app.config['SECRET_KEY'],
+                          algorithms=['HS256'])
+        logger.info(f"DATA: {data}")
+        logger.info(f"DATA_USER.ID: {data['sub']}")
+    except:
+        return
+    return User.query.filter_by(email=data['sub']).first()
+    # User.query.filter_by(email=email).first()
+
+
+def generate_auth_token(self, expires_in=60):
+    logger.info(f"USER_ID: {g.user.user_id}")
+    return jwt.encode(
+        {'sub': g.user.email, 'exp': time.time() + expires_in},
+        current_app.config['SECRET_KEY'], algorithm='HS256')
 
 
 class UsersResource(Resource):
@@ -42,107 +63,99 @@ class UsersResource(Resource):
 
         :return: User.user_id, 201 HTTP status code.
         """
-
         user_data = request.get_json()
-        # login_schema = LoginSchema().load(user_data)
-        # user = login_schema.load(user_data)
-        email = user_data['email']
-        password = user_data['password']
 
-        token = create_access_token(identity=email)
+        if request.endpoint == "login":
+            return self.login_with_username()
+        elif request.endpoint == "token":
+            token = user_data['token']
+            return self.login_with_token(token)
+        elif request.endpoint == "register":
+            return self.register()
+
+    def register(self):
+        try:
+            req = request.get_json()
+            data = req["user"]
+            email = data['email']
+            password = data['password']
+            user = User(
+                title=data['title'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                gender=data['gender'],
+                email=email,
+                password=generate_password_hash(password),
+                phone=data['phone'],
+                join_date=datetime.now(),
+                user_url=data['user_url']
+            )
+            if email is None or password is None:
+                # missing arguments
+                abort(400, "missing username or password")
+            if User.query.filter_by(email=email).first() is not None:
+                abort(400, "user already exist")    # existing user
+            user_json = UserSchema().dump(user)
+            user_json = UserSchema().load(user_json)
+            db.session.add(user_json)
+            db.session.commit()
+
+            address = Address(
+                address=data['address'],
+                town=data['town'],
+                state=data['state'],
+                lga=data['lga'],
+                landmark=data['landmark'],
+                user_id=user_json.user_id
+            )
+            address_json = AddressSchema().dump(address)
+            address_json = AddressSchema().load(address_json)
+            db.session.add(address_json)
+            db.session.commit()
+
+            return user.email, 201
+        except IntegrityError as e:
+            abort(500, message="Unexpected Error: {e}!")
+
+    # Attempt login with email and password
+
+    def login_with_username(self):
+        logger.info("LOGIN CALLED")
+
+        req = request.get_json()
+        data = req["user"]
+        logger.info(f"DATA: {data}")
+        email = data['username']
+        password = data['password']
 
         logger.info(
-            f"User retrieved from database by email: {email} and password: {password}")
+            f"User retrieved from database by email: {email}")
         verified_user = verify_password(email, password)
+        token = generate_auth_token(60)
         address = Address.query.filter_by(
             user_id=verified_user.user_id).first()
         address_json = AddressSchema().dump(address)
-        # verified_user.address = address_json
         user_json = UserSchema().dump(verified_user)
 
-        # new = User.query.get(1)
-        # addresses = []
-        # for adr in new.addresses:
-        #     addresses.append
-        #     logger.info(f"adr: {adr}")
-        #     logger.info(f"converted: {json.dumps(adr)}")
-        # j_addr = json.dumps(addresses)
-        # logger.info(f"serilized: {j_addr}")
-
-        if not verified_user:
+        if not verified_user or not token or not address:
             raise NoResultFound()
         logger.info(f"User retrieved from database {address_json}")
         logger.info(f"Token retrieved from database {token}")
         return [token, user_json, address_json], 200
-        # resp = [token, user]
-        # return (resp), 200
+        # return jsonify({"token": token, "user": user_json, "address": address_json}), 200
 
-
-# class UsersResource(Resource):
-
-    # @auth.login_required
-    # def get(self, id=None):
-    #     """
-    #     UsersResource GET method. Retrieves all users found in the mamaput
-    #     database, unless the id path parameter is provided. If this id
-    #     is provided then the user with the associated id is retrieved.
-
-    #     :param id: User ID to retrieve, this path parameter is optional
-    #     :return: User, 200 HTTP status code
-    #     """
-    #     if not id:
-    #         logger.info(
-    #             f"Retrieving all users{id}")
-    #         return self._get_all_users(), 200
-
-    #     logger.info(f"Retrieving user by id {id}")
-    #     try:
-    #         return self._get_user_by_id(id), 200
-    #     except NoResultFound:
-    #         abort(404, message="user not found")
-
-    # def _get_user_by_id(self, user_id):
-    #     """retrieve user by id"""
-    #     user = User.query.filter_by(user_id=user_id).first()
-    #     user_json = UserSchema().dump(user)
-
-    #     if not user_json:
-    #         raise NoResultFound()
-
-    #     logger.info(f"User retrieved from database {user_json}")
-    #     return user_json
-
-    # def _get_all_users(self):
-    #     """retrieve all users"""
-    #     users = User.query.all()
-
-    #     users_json = [UserSchema().dump(user) for user in users]
-
-    #     logger.info("Users successfully retrieved.")
-    #     return users_json
-
-    # def post(self):
-    #     """
-    #     UsersResource POST method. Adds a new User to the database.
-
-    #     :return: User.user_id, 201 HTTP status code.
-    #     """
-    #     user_data = request.get_json()
-    #     user_schema = UserSchema()
-    #     user = user_schema.load(user_data)
-
-    #     user['password'] = generate_password_hash(user['password'])
-
-    #     # new_user = User(user_id=user['user_id'], password=user['password'])
-
-    #     try:
-    #         db.session.add(user)
-    #         db.session.commit()
-    #     except IntegrityError as e:
-    #         logger.warning(
-    #             f"Integrity Error, this user is already in the database. "
-    #             f"Error: {e}"
-    #         )
-    #         abort(500, message="Unexpected Error!")
-    #     else:
-    #         return user.user_id, 201
+    # Attempt login with token
+    def login_with_token(self, token):
+        logger.info(f"ENTER LOGIN_WITH_TOKEN_FUNCTION")
+        if token is not None:
+            logger.info(f"TOKEN NOT NON")
+            verified_token = verify_auth_token(token)
+            # logger.info(f"TOKEN VERIFIED: {verified_token}")
+            if verified_token is not None:
+                logger.info(f"TOKEN VERIFIED-1: {verified_token}")
+                return True
+            else:
+                logger.info(f"NON-TOKEN-2: {verified_token}")
+                return False
+        logger.info(f"NON-TOKEN-3")
+        return False

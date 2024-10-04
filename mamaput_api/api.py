@@ -45,16 +45,21 @@ def create_app(db_location):
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'QZ0_IC8I_I1ueVP9Gl5bNUZbFv2hyfkcuOhWVfAWfUQ'
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # CORS(app, resources={r"/api/*": {"origins": "*"}})
     # CORS(app, resources={
     #      r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
+    CORS(app, resources={
+         r"/api/*": {"origins": ["https://moray-large-vervet.ngrok-free.app ", "https://live-fast-skylark.ngrok-free.app"]}})
     app.config["SQLALCHEMY_DATABASE_URI"] = db_location
     JWTManager(app)
     db.init_app(app)
 
     api = Api(app)
     api.add_resource(UsersResource, USERS_ENDPOINT,
-                     f"{USERS_ENDPOINT}/<id>")
+                     f"{USERS_ENDPOINT}/<id>", f"{USERS_ENDPOINT}/login")
+    api.add_resource(UsersResource, "/api/login", endpoint="login")
+    api.add_resource(UsersResource, "/api/token", endpoint="token")
+    api.add_resource(UsersResource, "/api/register", endpoint="register")
     api.add_resource(AddressesResource, ADDRESSES_ENDPOINT,
                      f"{ADDRESSES_ENDPOINT}/<id>")
     api.add_resource(CategoriesResource, CATEGORIES_ENDPOINT,

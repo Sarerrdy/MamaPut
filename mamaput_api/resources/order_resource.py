@@ -1,13 +1,17 @@
 import logging
+import json
 
 from flask import request
 from flask_restful import Resource, abort
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
+from datetime import datetime
 
 from database import db
 from models.order import Order
+from models.order_details import Order_Detail
 from schemas.order_schema import OrderSchema
+from schemas.order_details_schema import OrderDetailsSchema
 # from schemas.menu_order_schema import MenuOrderSchema
 
 ORDERS_ENDPOINT = "/api/orders"
@@ -70,11 +74,50 @@ class OrdersResource(Resource):
 
         :return: order.order_id, 201 HTTP status code.
         """
-        order = OrderSchema().load(request.get_json())
+        req_data = request.get_json()
+        # new_order = Order()
+        # new_order.total_price = order_data["total_price"]
+        # new_order.date_ordered = order_data["date_ordered"]
+        # new_order.expected_date_of_delivery = order_data["expected_date_of_delivery"],
+        # new_order.status = order_data["status"],
+        # new_order.user_id = order_data["user_id"]
+        neworder = req_data["orders"]["order"]
+        # neworder2 = neworder[0]
+        # logger.info(f"NEWORDER: {neworder}")
+
+        orderDetails = req_data["orders"]["order_details"]
+        # logger.info(f"DETAILS: {orderDetails}")
+
+        # update order details
+        # for orderDetail in orderDetails:
+        #     orderDetail.order = neworder
+
+        # logger.info(f"order: {neworder}")
+        # logger.info(f"orderDetails: {orderDetails}")
+
+        order = OrderSchema().load(neworder)
+        order.date_ordered = datetime.now()
+
+        # order.expected_date_of_delivery = datetime.strptime(
+        #     "2024-09-26T11:00:00", '%Y-%m-%dT%H:%M:%S')
+
+        orderDetailsSchema = OrderDetailsSchema(many=True)
+        orderDts = orderDetailsSchema.load(orderDetails)
 
         try:
+
             db.session.add(order)
+            # update order details
+            for orderDetail in orderDts:
+                # details = Order_Detail
+                # details.quantity = orderDetail.quantity
+                # details.discount = orderDetail.discount
+                orderDetail.order = order
+                orderDetail.order_id = order.order_id
+
+            db.session.add_all(orderDts)
             db.session.commit()
+
         except IntegrityError as e:
             logger.warning(
                 f"Integrity Error, this order is already in the database. "
@@ -83,4 +126,8 @@ class OrdersResource(Resource):
 
             abort(500, message="Unexpected Error!")
         else:
+            # orderDetail_json = [
+            #     OrderDetailsSchema().dump(details) for details in orderDts]
+            # logger.info(f"RETURNED: {orderDetail_json}")
+            # return orderDetail_json, 201
             return order.order_id, 201

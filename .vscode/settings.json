@@ -1,0 +1,11 @@
+{
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"database": "${workspaceFolder:mama_put}/mamaput.db",
+			"name": "mamaput_sqlite_conn"
+		}
+	],
+	"sqltools.useNodeRuntime": true
+}

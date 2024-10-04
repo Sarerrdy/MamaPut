@@ -1,4 +1,5 @@
 from database import db
+from sqlalchemy.sql import func
 
 
 class Order(db.Model):
@@ -13,7 +14,7 @@ class Order(db.Model):
     order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     total_price = db.Column(db.Float(precision=2), nullable=False)
     date_ordered = db.Column(
-        db.DateTime, default=db.func.now(), nullable=False)
+        db.DateTime, default=func.now(), nullable=False)
     expected_date_of_delivery = db.Column(db.DateTime)
     status = db.Column(db.String(), nullable=False)
 
@@ -36,5 +37,6 @@ class Order(db.Model):
             f"date_ordered: {self.date_ordered}"
             f"expected_date_of_delivery: {self.expected_date_of_delivery}"
             f"status: {self.status}"
+            f"user_id: {self.user_id}"
             f"**Order** "
         )

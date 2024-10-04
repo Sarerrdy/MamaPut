@@ -12,8 +12,8 @@ class OrderSchema(Schema):
 
     order_id = fields.Integer()
     total_price = fields.Float(allow_none=False)
-    date_ordered = fields.DateTime(allow_none=True)
-    expected_date_of_delivery = fields.DateTime(allow_none=True)
+    date_ordered = fields.String(allow_none=True)
+    expected_date_of_delivery = fields.String(allow_none=True)
     status = fields.String(allow_none=False)
     user_id = fields.Integer()
 

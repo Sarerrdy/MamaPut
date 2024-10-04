@@ -19,6 +19,7 @@ class OrderDetailsSchema(Schema):
     order_id = fields.Integer()
 
     order = fields.Nested(OrderSchema(), dump_only=True)
+    # order = fields.List(fields.Nested(OrderSchema(), dump_only=True))
     menus = fields.Nested(MenuSchema(), dump_only=True)
 
     @post_load
