@@ -68,6 +68,8 @@ def create_app(db_location):
                      f"{MENUS_ENDPOINT}/<id>")
     api.add_resource(OrdersResource, ORDERS_ENDPOINT,
                      f"{ORDERS_ENDPOINT}/<id>")
+    api.add_resource(OrdersResource, "/api/checkerToken",
+                     endpoint="checkerToken")
     api.add_resource(ReviewsResource, REVIEW_ENDPOINT,
                      f"{REVIEW_ENDPOINT}/<id>")
     api.add_resource(OrderDetailsResource, ORDERDETAILS_ENDPOINT,

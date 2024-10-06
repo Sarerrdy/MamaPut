@@ -1,11 +1,13 @@
 import logging
 import json
+import time
 
 from flask import request
-from flask_restful import Resource, abort
+from flask_restful import Resource, abort, current_app
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime
+import jwt
 
 from database import db
 from models.order import Order
@@ -18,6 +20,21 @@ ORDERS_ENDPOINT = "/api/orders"
 logger = logging.getLogger(__name__)
 
 
+def verify_auth_token(token):
+    try:
+        data = jwt.decode(token, current_app.config['SECRET_KEY'],
+                          algorithms=['HS256'])
+    except:
+        return
+    return data
+
+
+def generate_auth_token(self, expires_in=60):
+    return jwt.encode(
+        {'sub': "12345", 'exp': time.time() + expires_in},
+        current_app.config['SECRET_KEY'], algorithm='HS256')
+
+
 class OrdersResource(Resource):
     def get(self, id=None):
         """
@@ -28,13 +45,20 @@ class OrdersResource(Resource):
         :param id: Order ID to retrieve, this path parameter is optional
         :return: Order, 200 HTTP status code
         """
+        if request.endpoint == "checkerToken":
+            return self._get_checker(), 200
+        # if request.endpoint == "verifycheckerToken":
+        #     return self._verify_checker(), 200
+
         if not id:
             status = request.args.get("status")
+            checkerToken = request.args.get("checkerToken")
             logger.info(
                 f"Retrieving all orders, optionally filtered by "
                 f"status={status}"
             )
-
+            if checkerToken:
+                return self._verify_checker(checkerToken), 200
             return self._get_all_orders(status), 200
 
         logger.info(f"Retrieving orders by id {id}")
@@ -67,6 +91,18 @@ class OrdersResource(Resource):
 
         logger.info("Orders successfully retrieved.")
         return orders_json
+
+    def _get_checker(self):
+        """generate unique order identifier"""
+        token = generate_auth_token(60)
+        return token
+
+    def _verify_checker(self, token):
+        """generate unique order identifier"""
+        token = verify_auth_token(token)
+        if token:
+            return True
+        return False
 
     def post(self):
         """
@@ -123,11 +159,11 @@ class OrdersResource(Resource):
                 f"Integrity Error, this order is already in the database. "
                 f"Error: {e}"
             )
-
             abort(500, message="Unexpected Error!")
         else:
             # orderDetail_json = [
             #     OrderDetailsSchema().dump(details) for details in orderDts]
             # logger.info(f"RETURNED: {orderDetail_json}")
             # return orderDetail_json, 201
+            # order = OrderSchema().dump(order)
             return order.order_id, 201
