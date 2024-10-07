@@ -5,8 +5,9 @@ from flask_restful import Api
 from flask import Flask
 import logging
 import sys
-from os import path
+from os import path, getenv
 from database import db
+from dotenv import load_dotenv
 
 
 from resources.user_resource import UsersResource, USERS_ENDPOINT
@@ -22,10 +23,12 @@ from resources.shipping_info_resource import ShippingInfoResource, \
 from resources.order_details_resource import OrderDetailsResource, \
     ORDERDETAILS_ENDPOINT
 
+load_dotenv()  # Load environment variables from .env file
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 
-def create_app(db_location):
+# def create_app(db_location):
+def create_app():  # prooduction code
     """
     Function that creates our Flask application.
     This function creates the Flask app, Flask-RESTful API,
@@ -44,13 +47,19 @@ def create_app(db_location):
     )
 
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'QZ0_IC8I_I1ueVP9Gl5bNUZbFv2hyfkcuOhWVfAWfUQ'
+    # app.config['SECRET_KEY'] = 'QZ0_IC8I_I1ueVP9Gl5bNUZbFv2hyfkcuOhWVfAWfUQ'
+    app.config['SECRET_KEY'] = getenv(
+        'SECRET_KEY', 'default_secret_key')  # Production config
     # CORS(app, resources={r"/api/*": {"origins": "*"}})
     # CORS(app, resources={
     #      r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
     CORS(app, resources={
          r"/api/*": {"origins": ["https://moray-large-vervet.ngrok-free.app ", "https://live-fast-skylark.ngrok-free.app"]}})
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_location
+
+    # app.config["SQLALCHEMY_DATABASE_URI"] = db_location
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = getenv(
+        'DATABASE_URL', f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")
     JWTManager(app)
     db.init_app(app)
 
@@ -82,6 +91,8 @@ def create_app(db_location):
                      f"{CART_ENDPOINT}/<id>")
     return app
 
+
+app = create_app()
 
 if __name__ == "__main__":
     app = create_app(f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")
