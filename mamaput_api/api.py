@@ -27,8 +27,8 @@ load_dotenv()  # Load environment variables from .env file
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 
-# def create_app(db_location):
-def create_app():  # prooduction code
+def create_app(db_location):
+    # def create_app():  # prooduction code
     """
     Function that creates our Flask application.
     This function creates the Flask app, Flask-RESTful API,
@@ -56,10 +56,10 @@ def create_app():  # prooduction code
     CORS(app, resources={
          r"/api/*": {"origins": ["https://moray-large-vervet.ngrok-free.app ", "https://live-fast-skylark.ngrok-free.app"]}})
 
-    # app.config["SQLALCHEMY_DATABASE_URI"] = db_location
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_location
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = getenv(
-        'DATABASE_URL', f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")
+    # app.config['SQLALCHEMY_DATABASE_URI'] = getenv(
+    #     'DATABASE_URL', "sqlite:////{PROJECT_ROOT}" + "/mamaput.db")
     JWTManager(app)
     db.init_app(app)
 
@@ -92,7 +92,8 @@ def create_app():  # prooduction code
     return app
 
 
-app = create_app()
+app = create_app(f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")
+
 
 if __name__ == "__main__":
     app = create_app(f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")
