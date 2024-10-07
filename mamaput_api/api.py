@@ -1,4 +1,4 @@
-from constants import PROJECT_ROOT, MAMAPUT_DATABASE
+from mamaput_api.constants import PROJECT_ROOT, MAMAPUT_DATABASE
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
