@@ -6,21 +6,21 @@ from flask import Flask
 import logging
 import sys
 from os import path, getenv
-from database import db
+from mamaput_api.database import db
 from dotenv import load_dotenv
 
 
-from resources.user_resource import UsersResource, USERS_ENDPOINT
-from resources.address_resource import AddressesResource, ADDRESSES_ENDPOINT
-from resources.category_resource import CategoriesResource, CATEGORIES_ENDPOINT
-from resources.menu_resource import MenusResource, MENUS_ENDPOINT
-from resources.order_resource import OrdersResource, ORDERS_ENDPOINT
-from resources.review_resource import ReviewsResource, REVIEW_ENDPOINT
-from resources.payment_resource import PaymentsResource, PAYMENT_ENDPOINT
-from resources.cart_resource import CartsResource, CART_ENDPOINT
-from resources.shipping_info_resource import ShippingInfoResource, \
+from mamaput_api.resources.user_resource import UsersResource, USERS_ENDPOINT
+from mamaput_api.resources.address_resource import AddressesResource, ADDRESSES_ENDPOINT
+from mamaput_api.resources.category_resource import CategoriesResource, CATEGORIES_ENDPOINT
+from mamaput_api.resources.menu_resource import MenusResource, MENUS_ENDPOINT
+from mamaput_api.resources.order_resource import OrdersResource, ORDERS_ENDPOINT
+from mamaput_api.resources.review_resource import ReviewsResource, REVIEW_ENDPOINT
+from mamaput_api.resources.payment_resource import PaymentsResource, PAYMENT_ENDPOINT
+from mamaput_api.resources.cart_resource import CartsResource, CART_ENDPOINT
+from mamaput_api.resources.shipping_info_resource import ShippingInfoResource, \
     SHIPPING_ENDPOINT
-from resources.order_details_resource import OrderDetailsResource, \
+from mamaput_api.resources.order_details_resource import OrderDetailsResource, \
     ORDERDETAILS_ENDPOINT
 
 load_dotenv()  # Load environment variables from .env file
