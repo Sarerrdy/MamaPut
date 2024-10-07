@@ -23,7 +23,7 @@ from resources.shipping_info_resource import ShippingInfoResource, \
 from resources.order_details_resource import OrderDetailsResource, \
     ORDERDETAILS_ENDPOINT
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()  # Load environment variables from .env file in root
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 
