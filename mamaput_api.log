@@ -34407,3 +34407,147 @@ sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) unable to open datab
 10-07 02:18 resources.order_resource INFO     Retrieving all orders, optionally filtered by status=None
 10-07 02:18 resources.order_details_resource INFO     Retrieving all orderDetailss, optionally filtered by status=112
 10-07 02:18 resources.order_details_resource INFO     Orders successfully retrieved.
+10-07 03:38 resources.address_resource INFO     Retrieving all addresses, optionally filtered by user_id=None
+10-07 03:38 api          ERROR    Exception on /api/addresses [GET]
+Traceback (most recent call last):
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such table: addresses
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask_restful/__init__.py", line 489, in wrapper
+    resp = resource(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask/views.py", line 110, in view
+    return current_app.ensure_sync(self.dispatch_request)(**kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask_restful/__init__.py", line 604, in dispatch_request
+    resp = meth(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/Portfolio-Proj/mama_put/resources/address_resource.py", line 33, in get
+    return self._get_all_addresses(user_id), 200
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/Portfolio-Proj/mama_put/resources/address_resource.py", line 58, in _get_all_addresses
+    addresses = Address.query.all()
+                ^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2673, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2362, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2247, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: addresses
+[SQL: SELECT addresses.address_id AS addresses_address_id, addresses.address AS addresses_address, addresses.town AS addresses_town, addresses.state AS addresses_state, addresses.lga AS addresses_lga, addresses.landmark AS addresses_landmark, addresses.user_id AS addresses_user_id 
+FROM addresses]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+10-07 03:40 resources.menu_resource INFO     Retrieving all addresses, optionally filtered by status=None
+10-07 03:40 api          ERROR    Exception on /api/menus [GET]
+Traceback (most recent call last):
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such table: menus
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask_restful/__init__.py", line 489, in wrapper
+    resp = resource(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask/views.py", line 110, in view
+    return current_app.ensure_sync(self.dispatch_request)(**kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/flask_restful/__init__.py", line 604, in dispatch_request
+    resp = meth(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/Portfolio-Proj/mama_put/resources/menu_resource.py", line 33, in get
+    return self._get_all_menus(status), 200
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/Portfolio-Proj/mama_put/resources/menu_resource.py", line 62, in _get_all_menus
+    menus = Menu.query.all()
+            ^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2673, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2362, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2247, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/sarerrdy/.local/share/virtualenvs/mama_put-2pDDANxy/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: menus
+[SQL: SELECT menus.menu_id AS menus_menu_id, menus.name AS menus_name, menus.description AS menus_description, menus.price AS menus_price, menus.stock_quantity AS menus_stock_quantity, menus.status AS menus_status, menus.menu_url AS menus_menu_url, menus.category_id AS menus_category_id 
+FROM menus]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
