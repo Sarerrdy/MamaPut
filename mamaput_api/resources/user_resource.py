@@ -131,7 +131,7 @@ class UsersResource(Resource):
         logger.info(
             f"User retrieved from database by email: {email}")
         verified_user = verify_password(email, password)
-        token = generate_auth_token(60)
+        token = generate_auth_token(180)
         address = Address.query.filter_by(
             user_id=verified_user.user_id).first()
         address_json = AddressSchema().dump(address)

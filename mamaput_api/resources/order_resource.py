@@ -98,10 +98,13 @@ class OrdersResource(Resource):
         return token
 
     def _verify_checker(self, token):
-        """generate unique order identifier"""
+        """check validity of Token"""
         token = verify_auth_token(token)
+        logger.info(f"VerifyToken: {token}")
         if token:
+            logger.info("Token correct")
             return True
+        logger.info("Token failed")
         return False
 
     def post(self):
