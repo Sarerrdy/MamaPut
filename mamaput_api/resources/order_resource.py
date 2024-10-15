@@ -94,7 +94,7 @@ class OrdersResource(Resource):
 
     def _get_checker(self):
         """generate unique order identifier"""
-        token = generate_auth_token(60)
+        token = generate_auth_token(300)
         return token
 
     def _verify_checker(self, token):
@@ -113,16 +113,15 @@ class OrdersResource(Resource):
 
         :return: order.order_id, 201 HTTP status code.
         """
-        req_data = request.get_json()        
-        neworder = req_data["orders"]["order"]        
+        req_data = request.get_json()
+        neworder = req_data["orders"]["order"]
         orderDetails = req_data["orders"]["order_details"]
-        newAddress = req_data["orders"]["newAddressArgs"] 
-        payment = req_data["orders"]["payment"] 
+        newAddress = req_data["orders"]["newAddressArgs"]
+        payment = req_data["orders"]["payment"]
         shipping = req_data["orders"]["shipping"]
-       
 
         order = OrderSchema().load(neworder)
-        order.date_ordered = datetime.now()        
+        order.date_ordered = datetime.now()
 
         orderDetailsSchema = OrderDetailsSchema(many=True)
         orderDts = orderDetailsSchema.load(orderDetails)
@@ -131,7 +130,7 @@ class OrdersResource(Resource):
 
             db.session.add(order)
             # update order details
-            for orderDetail in orderDts:                
+            for orderDetail in orderDts:
                 orderDetail.order = order
                 orderDetail.order_id = order.order_id
 
@@ -144,5 +143,5 @@ class OrdersResource(Resource):
                 f"Error: {e}"
             )
             abort(500, message="Unexpected Error!")
-        else:           
+        else:
             return order.order_id, 201
