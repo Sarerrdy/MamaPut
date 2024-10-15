@@ -118,7 +118,7 @@ class OrdersResource(Resource):
         orderDetails = req_data["orders"]["order_details"]
         newAddress = req_data["orders"]["newAddressArgs"] 
         payment = req_data["orders"]["payment"] 
-        shipping = req_data["orders"]["shipping"] 
+        shipping = req_data["orders"]["shipping"]
        
 
         order = OrderSchema().load(neworder)
@@ -144,10 +144,5 @@ class OrdersResource(Resource):
                 f"Error: {e}"
             )
             abort(500, message="Unexpected Error!")
-        else:
-            # orderDetail_json = [
-            #     OrderDetailsSchema().dump(details) for details in orderDts]
-            # logger.info(f"RETURNED: {orderDetail_json}")
-            # return orderDetail_json, 201
-            # order = OrderSchema().dump(order)
+        else:           
             return order.order_id, 201
