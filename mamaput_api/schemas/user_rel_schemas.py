@@ -21,7 +21,7 @@ class UserSchema(Schema):
     password = fields.String(allow_none=False)
     phone = fields.Integer(allow_none=False)
     join_date = fields.DateTime(allow_none=True)
-    user_url = fields.Url(allow_none=True)
+    user_url = fields.String(allow_none=True)
 
     # addresses = fields.Nested(AddressSchema(), dump_only=True)
 

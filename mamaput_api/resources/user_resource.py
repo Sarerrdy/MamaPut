@@ -88,7 +88,8 @@ class UsersResource(Resource):
                 password=generate_password_hash(password),
                 phone=data['phone'],
                 join_date=datetime.now(),
-                user_url=data['user_url']
+                # user_url=data['user_url']
+                user_url=""
             )
             if email is None or password is None:
                 # missing arguments
