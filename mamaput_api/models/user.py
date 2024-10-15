@@ -19,7 +19,7 @@ class User(db.Model):
     password = db.Column(db.String(), nullable=False)
     phone = db.Column(db.Integer, nullable=False)
     join_date = db.Column(db.DateTime,  default=db.func.now(), nullable=True)
-    user_url = db.Column(db.String(), nullable=False)
+    user_url = db.Column(db.String(), nullable=True)
 
     addresses = db.relationship(
         "Address", back_populates="user", lazy=True)
