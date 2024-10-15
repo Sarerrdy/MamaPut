@@ -100,7 +100,7 @@ class OrdersResource(Resource):
     def _verify_checker(self, token):
         """check validity of Token"""
         token = verify_auth_token(token)
-        logger.info(f"VerifyToken: {token}")
+        logger.info(f"Token: {token}")
         if token:
             logger.info("Token correct")
             return True
@@ -113,32 +113,16 @@ class OrdersResource(Resource):
 
         :return: order.order_id, 201 HTTP status code.
         """
-        req_data = request.get_json()
-        # new_order = Order()
-        # new_order.total_price = order_data["total_price"]
-        # new_order.date_ordered = order_data["date_ordered"]
-        # new_order.expected_date_of_delivery = order_data["expected_date_of_delivery"],
-        # new_order.status = order_data["status"],
-        # new_order.user_id = order_data["user_id"]
-        neworder = req_data["orders"]["order"]
-        # neworder2 = neworder[0]
-        # logger.info(f"NEWORDER: {neworder}")
-
+        req_data = request.get_json()        
+        neworder = req_data["orders"]["order"]        
         orderDetails = req_data["orders"]["order_details"]
-        # logger.info(f"DETAILS: {orderDetails}")
-
-        # update order details
-        # for orderDetail in orderDetails:
-        #     orderDetail.order = neworder
-
-        # logger.info(f"order: {neworder}")
-        # logger.info(f"orderDetails: {orderDetails}")
+        newAddress = req_data["orders"]["newAddressArgs"] 
+        payment = req_data["orders"]["payment"] 
+        shipping = req_data["orders"]["shipping"] 
+       
 
         order = OrderSchema().load(neworder)
-        order.date_ordered = datetime.now()
-
-        # order.expected_date_of_delivery = datetime.strptime(
-        #     "2024-09-26T11:00:00", '%Y-%m-%dT%H:%M:%S')
+        order.date_ordered = datetime.now()        
 
         orderDetailsSchema = OrderDetailsSchema(many=True)
         orderDts = orderDetailsSchema.load(orderDetails)
@@ -147,10 +131,7 @@ class OrdersResource(Resource):
 
             db.session.add(order)
             # update order details
-            for orderDetail in orderDts:
-                # details = Order_Detail
-                # details.quantity = orderDetail.quantity
-                # details.discount = orderDetail.discount
+            for orderDetail in orderDts:                
                 orderDetail.order = order
                 orderDetail.order_id = order.order_id
 
