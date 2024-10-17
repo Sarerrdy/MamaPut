@@ -29,13 +29,13 @@ class Menu(db.Model):
     orderdetails = db.relationship(
         'Order_Detail', back_populates='menu')
 
-    def __repr__(self):
-        return (
-            f"**Menu** "
-            f"menu_id: {self.menu_id} "
-            f"name: {self.name} "
-            f"price: {self.price}"
-            f"status: {self.status}"
-            f"menu_url: {self.menu_url}"
-            f"**Menu** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**Menu** "
+    #         f"menu_id: {self.menu_id} "
+    #         f"name: {self.name} "
+    #         f"price: {self.price}"
+    #         f"status: {self.status}"
+    #         f"menu_url: {self.menu_url}"
+    #         f"**Menu** "
+    #     )

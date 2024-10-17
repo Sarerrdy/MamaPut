@@ -21,13 +21,13 @@ class Order_Detail(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey("orders.order_id"))
     order = db.relationship('Order', back_populates='orderdetails')
 
-    def __repr__(self):
-        return (
-            f"**Order_Details** "
-            f"order_details_id: {self.order_details_id} "
-            f"quantity: {self.quantity} "
-            f"discount: {self.discount}"
-            f"menu_id: {self.menu_id}"
-            f"order_id: {self.order_id}"
-            f"**Order_Details** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**Order_Details** "
+    #         f"order_details_id: {self.order_details_id} "
+    #         f"quantity: {self.quantity} "
+    #         f"discount: {self.discount}"
+    #         f"menu_id: {self.menu_id}"
+    #         f"order_id: {self.order_id}"
+    #         f"**Order_Details** "
+    #     )

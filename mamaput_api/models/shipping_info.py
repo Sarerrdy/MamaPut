@@ -29,17 +29,17 @@ class ShippingInfo(db.Model):
     address = db.relationship(
         "Address", back_populates="shipping_info", uselist=False)
 
-    def __repr__(self):
-        return (
-            f"**ShippingInfo** "
-            f"shipping_info_id: {self.shipping_info_id} "
-            f"order_id: {self.order_id} "
-            f"address_id: {self.address_id}"
-            f"shipper_id: {self.shipper_id} "
-            f"shipping_Method: {self.shipping_Method}"
-            f"shipping_cost: {self.shipping_cost}"
-            f"shipping_status: {self.shipping_status}"
-            f"shipped_date: {self.shipped_date}"
-            f"expected_delivery_date: {self.expected_delivery_date}"
-            f"**ShippingInfo** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**ShippingInfo** "
+    #         f"shipping_info_id: {self.shipping_info_id} "
+    #         f"order_id: {self.order_id} "
+    #         f"address_id: {self.address_id}"
+    #         f"shipper_id: {self.shipper_id} "
+    #         f"shipping_Method: {self.shipping_Method}"
+    #         f"shipping_cost: {self.shipping_cost}"
+    #         f"shipping_status: {self.shipping_status}"
+    #         f"shipped_date: {self.shipped_date}"
+    #         f"expected_delivery_date: {self.expected_delivery_date}"
+    #         f"**ShippingInfo** "
+    #     )

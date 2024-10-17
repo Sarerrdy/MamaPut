@@ -15,13 +15,13 @@ class ShippingInfoSchema(Schema):
     shipping_Method = fields.String(allow_none=False)
     shipping_cost = fields.Float(allow_none=False)
     shipping_status = fields.String(allow_none=False)
-    shipped_date = fields.DateTime(allow_none=False)
+    shipped_date = fields.DateTime(allow_none=True)
     expected_delivery_date = fields.DateTime()
     order_id = fields.Integer()
     address_id = fields.Integer()
 
-    order = fields.Nested(OrderSchema(), dump_only=True)
-    address = fields.Nested(AddressSchema(), dump_only=True)
+    order = fields.Nested(OrderSchema)
+    address = fields.Nested(AddressSchema)
 
     @post_load
     def make_ShippingInfo(self, data, **kwargs):

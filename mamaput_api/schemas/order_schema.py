@@ -19,6 +19,14 @@ class OrderSchema(Schema):
 
     user = fields.Nested(UserSchema(), dump_only=True)
 
+    # Excluding self referencing field
+    orderdetails = fields.List(fields.Nested(
+        'OrderDetailsSchema', exclude=('order',)))
+    payment = fields.Nested(
+        'PaymentSchema', exclude=('order',))
+    shipping_info = fields.Nested(
+        'ShippingInfoSchema', exclude=('order',))
+
     @post_load
     def make_order(self, data, **kwargs):
         return Order(**data)

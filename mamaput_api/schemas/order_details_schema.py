@@ -18,9 +18,14 @@ class OrderDetailsSchema(Schema):
     menu_id = fields.Integer()
     order_id = fields.Integer()
 
-    order = fields.Nested(OrderSchema(), dump_only=True)
-    # order = fields.List(fields.Nested(OrderSchema(), dump_only=True))
-    menus = fields.Nested(MenuSchema(), dump_only=True)
+    menu = fields.Nested(MenuSchema)  # Include full Menu schema
+    order = fields.Nested(OrderSchema)  # Include full Order schema
+
+    # orders = fields.Nested(OrderSchema, only=(
+    #     'order_id', 'total_price', 'date_ordered', 'expected_date_of_delivery', 'status', 'user_id'))
+    # # order = fields.List(fields.Nested(OrderSchema(), dump_only=True))
+    # menus = fields.Nested(MenuSchema, only=(
+    #     'menu_id', 'name', 'price', 'menu_url'))
 
     @post_load
     def make_order_detail(self, data, **kwargs):

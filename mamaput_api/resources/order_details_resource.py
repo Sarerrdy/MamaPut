@@ -1,11 +1,13 @@
 import logging
+from models.menu import Menu
 
-from flask import request
+from flask import jsonify, request
 from flask_restful import Resource, abort
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from database import db
+from models.order import Order
 from models.order_details import Order_Detail
 from schemas.order_details_schema import OrderDetailsSchema
 # from schemas.menu_order_schema import MenuOrderSchema
@@ -44,7 +46,7 @@ class OrderDetailsResource(Resource):
     def _get_orderdetails_by_id(self, order_details_id):
         """retrieve Orderdetail by Orderdetail id"""
         orderdetail = Order_Detail.query.filter_by(
-            order_details_id=order_details_id).first()
+            order_details_id=order_details_id).join(Menu).first()
         orderdetail_json = OrderDetailsSchema().dump(orderdetail)
 
         if not orderdetail_json:
@@ -57,13 +59,20 @@ class OrderDetailsResource(Resource):
         """retrieve all Orderdetails"""
         if order_id:
             orderdetails = Order_Detail.query.filter_by(
-                order_id=order_id).all()
+                order_id=order_id).join(Menu).all()
+            for detail in orderdetails:
+                logger.info(
+                    f"OrderDetail: {detail.order_details_id}, Menu: {detail.menu}, Order: {detail.order}")
+            logger.info(f"ORDER-DETAILS: {orderdetails}")
         else:
             orderdetails = Order_Detail.query.all()
 
-        orderdetails_json = [
-            OrderDetailsSchema().dump(orderdetail)
-            for orderdetail in orderdetails]
+        orderdetails_json = OrderDetailsSchema(many=True).dump(orderdetails)
+        logger.info(f"ORDER-DETAILS: {orderdetails}")
+        return orderdetails_json
+        # orderdetails_json = [
+        #     OrderDetailsSchema().dump(orderdetail)
+        #     for orderdetail in orderdetails]
 
         logger.info("Orders successfully retrieved.")
         return orderdetails_json

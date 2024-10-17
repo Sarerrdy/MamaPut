@@ -24,19 +24,19 @@ class Order(db.Model):
     orderdetails = db.relationship(
         'Order_Detail', back_populates='order')
 
-    payment = db.relationship("Payment", back_populates="order")
+    payment = db.relationship("Payment", back_populates="order", uselist=False)
 
     shipping_info = db.relationship(
         "ShippingInfo", back_populates="order", uselist=False)
 
-    def __repr__(self):
-        return (
-            f"**Order** "
-            f"order_id: {self.order_id} "
-            f"total_price: {self.total_price} "
-            f"date_ordered: {self.date_ordered}"
-            f"expected_date_of_delivery: {self.expected_date_of_delivery}"
-            f"status: {self.status}"
-            f"user_id: {self.user_id}"
-            f"**Order** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**Order** "
+    #         f"order_id: {self.order_id} "
+    #         f"total_price: {self.total_price} "
+    #         f"date_ordered: {self.date_ordered}"
+    #         f"expected_date_of_delivery: {self.expected_date_of_delivery}"
+    #         f"status: {self.status}"
+    #         f"user_id: {self.user_id}"
+    #         f"**Order** "
+    #     )

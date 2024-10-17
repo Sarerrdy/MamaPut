@@ -49,7 +49,7 @@ def verify_auth_token(token):
     # User.query.filter_by(email=email).first()
 
 
-def generate_auth_token(self, expires_in=60):
+def generate_auth_token(self, expires_in=300):
     logger.info(f"USER_ID: {g.user.user_id}")
     return jwt.encode(
         {'sub': g.user.email, 'exp': time.time() + expires_in},

@@ -20,14 +20,14 @@ class Payment(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'))
     order = db.relationship("Order", back_populates="payment", uselist=False)
 
-    def __repr__(self):
-        return (
-            f"**Payment** "
-            f"payment_id: {self.payment_id} "
-            f"order_id: {self.order_id} "
-            f"amount: {self.amount}"
-            f"payment_Method: {self.payment_Method} "
-            f"payment_status: {self.payment_status}"
-            f"payment_date: {self.payment_date}"
-            f"**Payment** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**Payment** "
+    #         f"payment_id: {self.payment_id} "
+    #         f"order_id: {self.order_id} "
+    #         f"amount: {self.amount}"
+    #         f"payment_Method: {self.payment_Method} "
+    #         f"payment_status: {self.payment_status}"
+    #         f"payment_date: {self.payment_date}"
+    #         f"**Payment** "
+    #     )

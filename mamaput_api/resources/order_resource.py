@@ -2,18 +2,25 @@ import logging
 import json
 import time
 
-from flask import request
+from flask import jsonify, request
 from flask_restful import Resource, abort, current_app
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
-from datetime import datetime
+from datetime import datetime, timedelta
 import jwt
 
 from database import db
+from models.payment import Payment
+from models.shipping_info import ShippingInfo
 from models.order import Order
+from models.menu import Menu
 from models.order_details import Order_Detail
+from schemas.menu_schema import MenuSchema
 from schemas.order_schema import OrderSchema
 from schemas.order_details_schema import OrderDetailsSchema
+from schemas.address_schema import AddressSchema
+from schemas.payment_schema import PaymentSchema
+from schemas.shipping_info_schema import ShippingInfoSchema
 # from schemas.menu_order_schema import MenuOrderSchema
 
 ORDERS_ENDPOINT = "/api/orders"
@@ -29,7 +36,7 @@ def verify_auth_token(token):
     return data
 
 
-def generate_auth_token(self, expires_in=60):
+def generate_auth_token(self, expires_in=300):
     return jwt.encode(
         {'sub': "12345", 'exp': time.time() + expires_in},
         current_app.config['SECRET_KEY'], algorithm='HS256')
@@ -70,14 +77,17 @@ class OrdersResource(Resource):
 
     def _get_order_by_id(self, order_id):
         """retrieve order by order id"""
-        order = Order.query.filter_by(order_id=order_id).first()
-        order_json = OrderSchema().dump(order)
-
-        if not order_json:
-            raise NoResultFound()
-
-        logger.info(f"Order retrieved from database {order_json}")
-        return order_json
+        if order_id:
+            order = Order.query.get_or_404(order_id)
+            order_schema = OrderSchema()
+            order_json = order_schema.dump(order)
+            print(f"ORDER_JSON: {order_json}")
+            return order_json
+        else:
+            orders = Order.query.all()
+            orders_schema = OrderSchema(many=True)
+            orders_json = orders_schema.dump(orders)
+            return jsonify(orders_json)
 
     def _get_all_orders(self, status):
         """retrieve all order"""
@@ -116,25 +126,72 @@ class OrdersResource(Resource):
         req_data = request.get_json()
         neworder = req_data["orders"]["order"]
         orderDetails = req_data["orders"]["order_details"]
-        newAddress = req_data["orders"]["newAddressArgs"]
-        payment = req_data["orders"]["payment"]
-        shipping = req_data["orders"]["shipping"]
+        newAddress = req_data["orders"]["addresses"]
+        payment = req_data["orders"]["payments"]
+        shipping = req_data["orders"]["shipping_info"]
+        logger.info(f"NEW ADDRESS: { newAddress}")
+        logger.info(f"NEW ADDRESS USER_ID: { newAddress['user_id']}")
 
+        # order
         order = OrderSchema().load(neworder)
         order.date_ordered = datetime.now()
-
+        # order details
         orderDetailsSchema = OrderDetailsSchema(many=True)
         orderDts = orderDetailsSchema.load(orderDetails)
 
-        try:
+        # payment
 
+        payment["payment_date"] = None
+        payment = PaymentSchema().load(payment)
+
+        # shipping
+        # shippingJson = json.loads(shipping)
+        shipping["shipped_date"] = None
+
+        if shipping["shipping_Method"] == "express":
+            deliverytime = datetime.now() + timedelta(hours=2)  # 2 hours delivery
+            shipping["expected_delivery_date"] = deliverytime.isoformat()
+        elif shipping["shipping_Method"] == "standard":
+            deliverytime = datetime.now() + timedelta(hours=5)  # 5 hours delivery
+            shipping["expected_delivery_date"] = deliverytime.isoformat()
+        else:
+            deliverytime = datetime.now() + timedelta(minutes=15)  # 15 minutes delivery
+            shipping["expected_delivery_date"] = deliverytime.isoformat()
+        shipping = ShippingInfoSchema().load(shipping)
+
+        try:
+            # add order
             db.session.add(order)
+            db.session.commit()
+
+            # update new address only with id==0
+            if (newAddress["address_id"] == 0):
+                newAddressJson = AddressSchema().load(newAddress)
+                newAddressJson.address_id = None
+                db.session.add(newAddressJson)
+                db.session.commit()
+                shipping.address_id = newAddressJson.address_id
+
             # update order details
             for orderDetail in orderDts:
                 orderDetail.order = order
                 orderDetail.order_id = order.order_id
-
+                menu = Menu.query.filter_by(
+                    menu_id=orderDetail.menu_id).first()
+                orderDetail.menu = menu
             db.session.add_all(orderDts)
+
+            # update payment with order_id
+            payment.order_id = order.order_id
+            db.session.add(payment)
+
+            # update shipping with address id and order id
+            shipping.order_id = order.order_id
+            if (int(newAddress["address_id"]) > 0):
+                shipping.address_id = newAddress["address_id"]
+            db.session.add(shipping)
+
+            # commit all datatset
             db.session.commit()
 
         except IntegrityError as e:

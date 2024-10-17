@@ -14,10 +14,10 @@ class PaymentSchema(Schema):
     payment_Method = fields.String(allow_none=False)
     amount = fields.Float(allow_none=False)
     payment_status = fields.String(allow_none=False)
-    payment_date = fields.DateTime(allow_none=False)
+    payment_date = fields.DateTime(allow_none=True)
     order_id = fields.Integer()
 
-    order = fields.Nested(OrderSchema(), dump_only=True)
+    order = fields.Nested(OrderSchema)
 
     @post_load
     def make_Shipping(self, data, **kwargs):
