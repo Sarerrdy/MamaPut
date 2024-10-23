@@ -60,12 +60,16 @@ class OrdersResource(Resource):
         if not id:
             status = request.args.get("status")
             checkerToken = request.args.get("checkerToken")
+            user_id = request.args.get("user_id")
             logger.info(
                 f"Retrieving all orders, optionally filtered by "
                 f"status={status}"
             )
             if checkerToken:
                 return self._verify_checker(checkerToken), 200
+            if user_id:
+                # return all oders by this user
+                return self._get_order_by_userid(user_id), 200
             return self._get_all_orders(status), 200
 
         logger.info(f"Retrieving orders by id {id}")
@@ -84,10 +88,21 @@ class OrdersResource(Resource):
             print(f"ORDER_JSON: {order_json}")
             return order_json
         else:
-            orders = Order.query.all()
-            orders_schema = OrderSchema(many=True)
-            orders_json = orders_schema.dump(orders)
-            return jsonify(orders_json)
+            # orders = Order.query.all()
+            # orders_schema = OrderSchema(many=True)
+            # orders_json = orders_schema.dump(orders)
+            return 404
+
+    def _get_order_by_userid(user_id):
+        """retrive all orders associated to user_id"""
+        if user_id:
+            order = Order.query.filter_by(
+                user_id=user_id).all()
+            order_schema = OrderSchema(many=True)
+            order_json = order_schema.dump(order)
+            return order_json
+        else:
+            return 404
 
     def _get_all_orders(self, status):
         """retrieve all order"""
@@ -126,11 +141,11 @@ class OrdersResource(Resource):
         req_data = request.get_json()
         neworder = req_data["orders"]["order"]
         orderDetails = req_data["orders"]["order_details"]
-        newAddress = req_data["orders"]["addresses"]
+        newAddress = req_data["orders"]["orderAddress"]
         payment = req_data["orders"]["payments"]
         shipping = req_data["orders"]["shipping_info"]
-        logger.info(f"NEW ADDRESS: { newAddress}")
-        logger.info(f"NEW ADDRESS USER_ID: { newAddress['user_id']}")
+        # logger.info(f"NEW ADDRESS: { newAddress}")
+        # logger.info(f"NEW ADDRESS USER_ID: { newAddress['user_id']}")
 
         # order
         order = OrderSchema().load(neworder)

@@ -23,13 +23,13 @@ class Review(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     reviewer = db.relationship("User", back_populates="menu_reviewer")
 
-    def __repr__(self):
-        return (
-            f"**Review** "
-            f"review_id: {self.review_id} "
-            f"details: {self.details} "
-            f"rating: {self.rating}"
-            f"revied_status: {self.revied_status}"
-            f"date_reviewed: {self.date_reviewed}"
-            f"**Review** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**Review** "
+    #         f"review_id: {self.review_id} "
+    #         f"details: {self.details} "
+    #         f"rating: {self.rating}"
+    #         f"revied_status: {self.revied_status}"
+    #         f"date_reviewed: {self.date_reviewed}"
+    #         f"**Review** "
+    #     )

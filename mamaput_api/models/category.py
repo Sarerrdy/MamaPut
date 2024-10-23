@@ -16,11 +16,11 @@ class Category(db.Model):
 
     menus = db.relationship("Menu", back_populates="category")
 
-    def __repr__(self):
-        return (
-            f"**Category** "
-            f"category_id: {self.category_id} "
-            f"name: {self.name} "
-            f"category_url: {self.category_url} "
-            f"**Category** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**Category** "
+    #         f"category_id: {self.category_id} "
+    #         f"name: {self.name} "
+    #         f"category_url: {self.category_url} "
+    #         f"**Category** "
+    #     )

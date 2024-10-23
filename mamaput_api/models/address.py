@@ -23,14 +23,14 @@ class Address(db.Model):
     shipping_info = db.relationship(
         "ShippingInfo", back_populates="address", uselist=False)
 
-    def __repr__(self):
-        return (
-            f"**Address** "
-            f"address_id: {self.address_id} "
-            f"address: {self.address} "
-            f"town: {self.town}"
-            f"state: {self.state}"
-            f"lga: {self.lga}"
-            f"landmark: {self.landmark}"
-            f"**Address** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**Address** "
+    #         f"address_id: {self.address_id} "
+    #         f"address: {self.address} "
+    #         f"town: {self.town}"
+    #         f"state: {self.state}"
+    #         f"lga: {self.lga}"
+    #         f"landmark: {self.landmark}"
+    #         f"**Address** "
+    #     )

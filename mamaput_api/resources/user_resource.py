@@ -2,9 +2,10 @@ import logging
 from datetime import datetime
 import time
 
-from flask import request, jsonify, g
+from flask import json, request, jsonify, g
 from flask_restful import Resource, current_app, abort
 # from flask_restful import Resource, abort
+from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -33,6 +34,7 @@ def verify_password(email, password):
     user = User.query.filter_by(email=email).first()
     if user and check_password_hash(user.password, password):
         g.user = user
+        print(f"myUSER: {user}")
         return user
     return None
 
@@ -72,6 +74,69 @@ class UsersResource(Resource):
             return self.login_with_token(token)
         elif request.endpoint == "register":
             return self.register()
+
+    def put(self, id):
+        """
+        UsersResource PUT method. Updates existing user in the database.
+        :param user_id: ID of the user to be updated.
+        :return: Updated user data and HTTP status code.
+        """
+
+        try:
+
+            json_data = request.get_json(force=True)
+            if not json_data:
+                return ("No input data provided")
+
+            if 'currentPassword' not in json_data:
+                # Validate and deserialize input
+                try:
+
+                    data = UserSchema().load(json_data)
+                except ValidationError as err:
+                    return err.messages, 422
+
+                # Find existing user
+                user = User.query.filter_by(user_id=id).first()
+                if not user:
+                    return {"message": "User not found!"}, 400
+                user.phone = data.phone
+
+                db.session.commit()
+
+                result = UserSchema().dump(user)
+
+                return {'message': "phone update was successful", 'data': result['phone']}, 200
+            else:
+                return self.changepassword(id, json_data)
+        except Exception as e:
+            return {"error": str(e)}, 400
+
+    def changepassword(self, id, json_data):
+        """Change password"""
+
+        try:
+            email = json_data['email']
+            currentPassword = json_data['currentPassword']
+            newPassword = json_data['newPassword']
+
+            verified_user = verify_password(
+                email, currentPassword)
+            if verified_user is None:
+                return {"message": "Current password is not correct!"}, 400
+
+            else:
+                # Find existing user
+                user = User.query.filter_by(user_id=id).first()
+                user.password = generate_password_hash(
+                    newPassword)
+                print(f"CALL USER: {user}")
+                db.session.commit()
+
+                return {'message': "Password change was successful"}, 200
+
+        except Exception as e:
+            return {"error": str(e)}, 400
 
     def register(self):
         try:

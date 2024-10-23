@@ -1,7 +1,8 @@
 import logging
 
-from flask import request
+from flask import jsonify, request
 from flask_restful import Resource, abort
+from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -54,14 +55,16 @@ class AddressesResource(Resource):
         """retrieve all addresses"""
         if user_id:
             addresses = Address.query.filter_by(user_id=user_id).all()
+            address_schema = AddressSchema(many=True)
+            addresses_json = address_schema.dump(addresses)
+
+            # addresses_json = [
+            #     AddressSchema().dump(address) for address in addresses]
+
+            logger.info("Address successfully retrieved.")
+            return addresses_json
         else:
-            addresses = Address.query.all()
-
-        addresses_json = [
-            AddressSchema().dump(address) for address in addresses]
-
-        logger.info("Address successfully retrieved.")
-        return addresses_json
+            return {'message': "this User has no registered address"}, 400
 
     def post(self):
         """
@@ -69,7 +72,10 @@ class AddressesResource(Resource):
 
         :return: Address.address_id, 201 HTTP status code.
         """
-        address = AddressSchema().load(request.get_json())
+
+        req_data = request.get_json()
+        newAdr = req_data["newaddress"]
+        address = AddressSchema().load(newAdr)
 
         try:
             db.session.add(address)
@@ -82,4 +88,57 @@ class AddressesResource(Resource):
 
             abort(500, message="Unexpected Error!")
         else:
-            return address.address_id, 201
+            address = AddressSchema().dump(address)
+            return {'message': "Address was created succesfully", 'data': address}, 201
+
+    def put(self, id):
+        """
+        AddressResource PUT method. Updates existing address in the database.
+        :param id: ID of the address to be updated.
+        :return: Updated address data and HTTP status code.
+        """
+        try:
+            req_data = request.get_json(force=True)
+            if not req_data:
+
+                return {'message': "No input data provided"}, 405
+            addr = AddressSchema().load(req_data)
+
+            existingAddr = Address.query.filter_by(address_id=id).first()
+
+            # assign updated address
+            existingAddr.address = addr.address
+            existingAddr.town = addr.address
+            existingAddr.state = addr.state
+            existingAddr.lga = addr.lga
+            existingAddr.landmark = addr.landmark
+            existingAddr.user_id = addr.user_id
+
+            db.session.commit()
+            address = AddressSchema().dump(existingAddr)
+            print(f"ADDRESS: {address}")
+            return {'message': "Address was updated succesfully", 'data': address}, 201
+        except:
+            return {"message": "Address update failed"}, 400
+
+    def delete(self, id):
+        """
+        AddressResource DELETE method. Deletes existing address in the database.
+        :param id: ID of the address to be deleted.
+        :return: HTTP status code.
+        """
+        if id is not None:
+            existingAddr = Address.query.filter_by(address_id=id).first()
+            if not existingAddr:
+                return {'message': "Address not found"}, 404
+            try:
+                # Here we delete the existing address
+                db.session.delete(existingAddr)
+                db.session.commit()
+                return {'message': "Address deleted successfully"}, 200
+            except Exception as e:
+                db.session.rollback()
+                return {'message': "An error occurred while deleting the address: " + str(e)}, 500
+
+        else:
+            return {'message': "Address id cannot be empty"}, 400

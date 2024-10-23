@@ -28,16 +28,16 @@ class User(db.Model):
     menu_reviewer = db.relationship(
         "Review", uselist=False, back_populates="reviewer")
 
-    def __repr__(self):
-        return (
-            f"**User** "
-            f"user_id: {self.user_id} "
-            f"first_name: {self.first_name} "
-            f"last_name: {self.last_name}"
-            f"gender: {self.gender}"
-            f"email: {self.email}"
-            f"phone: {self.phone}"
-            f"join_date: {self.join_date}"
-            f"user_url: {self.user_id}"
-            f"**User** "
-        )
+    # def __repr__(self):
+    #     return (
+    #         f"**User** "
+    #         f"user_id: {self.user_id} "
+    #         f"first_name: {self.first_name} "
+    #         f"last_name: {self.last_name}"
+    #         f"gender: {self.gender}"
+    #         f"email: {self.email}"
+    #         f"phone: {self.phone}"
+    #         f"join_date: {self.join_date}"
+    #         f"user_url: {self.user_id}"
+    #         f"**User** "
+    #     )
