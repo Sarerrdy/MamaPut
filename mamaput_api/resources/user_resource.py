@@ -2,9 +2,8 @@ import logging
 from datetime import datetime
 import time
 
-from flask import json, request, jsonify, g
+from flask import request, g
 from flask_restful import Resource, current_app, abort
-# from flask_restful import Resource, abort
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
@@ -12,8 +11,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from database import db
 from models.user import User
 from models.address import Address
-# from schemas.user_schema import UserSchema
-# from schemas.login_schema import LoginSchema
 from schemas.user_rel_schemas import UserSchema, AddressSchema
 
 
@@ -181,7 +178,7 @@ class UsersResource(Resource):
 
             return user.email, 201
         except IntegrityError as e:
-            abort(500, message="Unexpected Error: {e}!")
+            abort(500, message=f"Unexpected Error: {e}!")
 
     # Attempt login with email and password
 

@@ -1,8 +1,8 @@
 import logging
 
-from flask import jsonify, request
+from flask import request
 from flask_restful import Resource, abort
-from marshmallow import ValidationError
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 

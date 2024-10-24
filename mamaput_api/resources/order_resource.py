@@ -1,27 +1,26 @@
 import logging
-import json
 import time
 
-from flask import jsonify, request
+from flask import request
 from flask_restful import Resource, abort, current_app
+from flask_mail import Message
+# from api import mail
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime, timedelta
 import jwt
 
 from database import db
-from models.payment import Payment
-from models.shipping_info import ShippingInfo
 from models.order import Order
 from models.menu import Menu
-from models.order_details import Order_Detail
-from schemas.menu_schema import MenuSchema
+from models.user import User
+
 from schemas.order_schema import OrderSchema
 from schemas.order_details_schema import OrderDetailsSchema
 from schemas.address_schema import AddressSchema
 from schemas.payment_schema import PaymentSchema
 from schemas.shipping_info_schema import ShippingInfoSchema
-# from schemas.menu_order_schema import MenuOrderSchema
+
 
 ORDERS_ENDPOINT = "/api/orders"
 logger = logging.getLogger(__name__)
@@ -138,6 +137,7 @@ class OrdersResource(Resource):
 
         :return: order.order_id, 201 HTTP status code.
         """
+        from api import mail  # Import here to avoid circular import
         req_data = request.get_json()
         neworder = req_data["orders"]["order"]
         orderDetails = req_data["orders"]["order_details"]
@@ -176,6 +176,7 @@ class OrdersResource(Resource):
 
         try:
             # add order
+            order.expected_date_of_delivery = shipping.expected_delivery_date
             db.session.add(order)
             db.session.commit()
 
@@ -208,6 +209,35 @@ class OrdersResource(Resource):
 
             # commit all datatset
             db.session.commit()
+
+            # send email to notify user
+            try:
+                user = User.query.get_or_404(order.user_id)
+                email = user.email
+                logger.info(f"EMAIL: {email}")
+                # Send a confirmation email
+                msg = Message(
+                    'Order Confirmation',
+                    sender=current_app.config['MAIL_USERNAME'],
+                    recipients=[email])
+
+                msg.body = f"""Thank you for your order!
+                            Your order has been placed successfully with #Order_Number: {order.order_id}.
+                            We appreciate your business and will notify you once your order has shipped.
+                            If you have any questions, feel free to contact us.
+
+                            You can view your order history in your profile page at: chttps://mamaputapp.onrender.com/profile
+
+                            Best regards,
+                            MamaPut..
+                            serving African
+                            """
+                # mail.send(msg)
+            except IntegrityError as e:
+                logger.error(
+                    f"Email sending failed!!!"
+                    f"Error: {e}"
+                )
 
         except IntegrityError as e:
             logger.warning(
