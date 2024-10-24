@@ -2,7 +2,7 @@ from constants import PROJECT_ROOT, MAMAPUT_DATABASE
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from flask_mail import Mail
+from flask_mail import Mail, Message
 from flask import Flask
 
 import logging
@@ -109,6 +109,27 @@ api.add_resource(ShippingInfoResource, SHIPPING_ENDPOINT,
 api.add_resource(CartsResource, CART_ENDPOINT,
                  f"{CART_ENDPOINT}/<id>")
 # return app
+
+# email = "sarerrdy4live@gmail.com"
+
+# # Send a confirmation email
+# msg = Message(
+#     'Order Confirmation',
+#     sender=app.config['MAIL_USERNAME'],
+#     recipients=[email])
+
+# msg.body = """Thank you for your order!
+#             Your order has been placed successfully with #Order_Number: .
+#             We appreciate your business and will notify you once your order has shipped.
+#             If you have any questions, feel free to contact us.
+
+#             You can view your order history in your profile page at: chttps://mamaputapp.onrender.com/profile
+
+#             Best regards,
+#             MamaPut..
+#             serving African
+#             """
+# mail.send(msg)
 
 
 # app = create_app(f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")

@@ -3,7 +3,7 @@ import time
 
 from flask import request
 from flask_restful import Resource, abort, current_app
-from flask_mail import Message
+# from flask_mail import Message
 # from api import mail
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
@@ -211,33 +211,33 @@ class OrdersResource(Resource):
             db.session.commit()
 
             # send email to notify user
-            try:
-                user = User.query.get_or_404(order.user_id)
-                email = user.email
-                logger.info(f"EMAIL: {email}")
-                # Send a confirmation email
-                msg = Message(
-                    'Order Confirmation',
-                    sender=current_app.config['MAIL_USERNAME'],
-                    recipients=[email])
+            # try:
+            #     user = User.query.get_or_404(order.user_id)
+            #     email = user.email
+            #     logger.info(f"EMAIL: {email}")
+            #     # Send a confirmation email
+            #     msg = Message(
+            #         'Order Confirmation',
+            #         sender=current_app.config['MAIL_USERNAME'],
+            #         recipients=[email])
 
-                msg.body = f"""Thank you for your order!
-                            Your order has been placed successfully with #Order_Number: {order.order_id}.
-                            We appreciate your business and will notify you once your order has shipped.
-                            If you have any questions, feel free to contact us.
+            #     msg.body = f"""Thank you for your order!
+            #                 Your order has been placed successfully with #Order_Number: {order.order_id}.
+            #                 We appreciate your business and will notify you once your order has shipped.
+            #                 If you have any questions, feel free to contact us.
 
-                            You can view your order history in your profile page at: chttps://mamaputapp.onrender.com/profile
+            #                 You can view your order history in your profile page at: chttps://mamaputapp.onrender.com/profile
 
-                            Best regards,
-                            MamaPut..
-                            serving African
-                            """
-                mail.send(msg)
-            except IntegrityError as e:
-                logger.error(
-                    f"Email sending failed!"
-                    f"Error: {e}"
-                )
+            #                 Best regards,
+            #                 MamaPut..
+            #                 serving African
+            #                 """
+            #     mail.send(msg)
+            # except IntegrityError as e:
+            #     logger.error(
+            #         f"Email sending failed!"
+            #         f"Error: {e}"
+            #     )
 
         except IntegrityError as e:
             logger.warning(
