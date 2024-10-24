@@ -232,7 +232,7 @@ class OrdersResource(Resource):
                             MamaPut..
                             serving African
                             """
-                # mail.send(msg)
+                mail.send(msg)
             except IntegrityError as e:
                 logger.error(
                     f"Email sending failed!"
