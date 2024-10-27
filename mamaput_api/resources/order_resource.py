@@ -72,7 +72,7 @@ class OrdersResource(Resource):
                 return self._verify_checker(checkerToken), 200
             if user_id:
                 # return all oders by this user
-                return self._get_order_by_userid(user_id), 200
+                return self._get_order_by_userid(self, user_id), 200
             return self._get_all_orders(status), 200
 
         logger.info(f"Retrieving orders by id {id}")
@@ -89,6 +89,8 @@ class OrdersResource(Resource):
             order_schema = OrderSchema()
             order_json = order_schema.dump(order)
             print(f"ORDER_JSON: {order_json}")
+            logger.info(
+                "Orders successfully retrieved from  _get_order_by_id(self, order_id)")
             return order_json
         else:
             # orders = Order.query.all()
@@ -96,13 +98,15 @@ class OrdersResource(Resource):
             # orders_json = orders_schema.dump(orders)
             return 404
 
-    def _get_order_by_userid(user_id):
+    def _get_order_by_userid(self, user_id):
         """retrive all orders associated to user_id"""
         if user_id:
             order = Order.query.filter_by(
                 user_id=user_id).all()
             order_schema = OrderSchema(many=True)
             order_json = order_schema.dump(order)
+            logger.info(
+                "Orders successfully retrieved from _get_order_by_userid(user_id).")
             return order_json
         else:
             return 404
@@ -118,6 +122,8 @@ class OrdersResource(Resource):
             OrderSchema().dump(order) for order in orders]
 
         logger.info("Orders successfully retrieved.")
+        logger.info(
+            "Orders successfully retrieved from _get_all_orders(self, status)")
         return orders_json
 
     def _get_checker(self):
