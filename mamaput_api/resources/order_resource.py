@@ -3,7 +3,7 @@ import time
 
 from flask import request
 from flask_restful import Resource, abort, current_app
-# from flask_mail import Message
+
 # from api import mail
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
@@ -20,6 +20,10 @@ from schemas.order_details_schema import OrderDetailsSchema
 from schemas.address_schema import AddressSchema
 from schemas.payment_schema import PaymentSchema
 from schemas.shipping_info_schema import ShippingInfoSchema
+
+# send mails
+from email.mime.text import MIMEText
+import smtplib
 
 
 ORDERS_ENDPOINT = "/api/orders"
@@ -49,8 +53,8 @@ class OrdersResource(Resource):
         is provided then the order with the associated id is retrieved.
 
         :param id: Order ID to retrieve, this path parameter is optional
-        :return: Order, 200 HTTP status code
-        """
+        :return: Order, 200 HTTP status code        """
+
         if request.endpoint == "checkerToken":
             return self._get_checker(), 200
         # if request.endpoint == "verifycheckerToken":
@@ -137,15 +141,13 @@ class OrdersResource(Resource):
 
         :return: order.order_id, 201 HTTP status code.
         """
-        from api import mail  # Import here to avoid circular import
+        # from api import mail  # Import here to avoid circular import
         req_data = request.get_json()
         neworder = req_data["orders"]["order"]
         orderDetails = req_data["orders"]["order_details"]
         newAddress = req_data["orders"]["orderAddress"]
         payment = req_data["orders"]["payments"]
         shipping = req_data["orders"]["shipping_info"]
-        # logger.info(f"NEW ADDRESS: { newAddress}")
-        # logger.info(f"NEW ADDRESS USER_ID: { newAddress['user_id']}")
 
         # order
         order = OrderSchema().load(neworder)
@@ -210,34 +212,35 @@ class OrdersResource(Resource):
             # commit all datatset
             db.session.commit()
 
-            # send email to notify user
-            # try:
-            #     user = User.query.get_or_404(order.user_id)
-            #     email = user.email
-            #     logger.info(f"EMAIL: {email}")
-            #     # Send a confirmation email
-            #     msg = Message(
-            #         'Order Confirmation',
-            #         sender=current_app.config['MAIL_USERNAME'],
-            #         recipients=[email])
+            try:
+                user = User.query.get_or_404(order.user_id)
+                email = user.email
+                logger.info("Attempting to send mail")
 
-            #     msg.body = f"""Thank you for your order!
-            #                 Your order has been placed successfully with #Order_Number: {order.order_id}.
-            #                 We appreciate your business and will notify you once your order has shipped.
-            #                 If you have any questions, feel free to contact us.
+                # Create the message
+                msg = MIMEText(
+                    f""" Your order has been placed successfully with #Order_Number: {order.order_id}.\nWe will notify you once your order has shipped.\nIf you have any questions, feel free to contact us.\nYou can view your order history by signing into your profile page at: https://mamaputapp.onrender.com/profile\nBest regards, MamaPut""")
+                msg['Subject'] = 'Order Confirmation'
+                msg['From'] = 'mamaputwebapp@gmail.com'
+                msg['To'] = email
 
-            #                 You can view your order history in your profile page at: chttps://mamaputapp.onrender.com/profile
+                # Send the email
+                server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+                server.login("mamaputwebapp@gmail.com", "dlyz dxnr jywr yeiu")
+                server.sendmail(
+                    from_addr="mamaputwebapp@gmail.com",
+                    to_addrs=[email],
+                    msg=msg.as_string()
+                )
+                server.quit()
 
-            #                 Best regards,
-            #                 MamaPut..
-            #                 serving African
-            #                 """
-            #     mail.send(msg)
-            # except IntegrityError as e:
-            #     logger.error(
-            #         f"Email sending failed!"
-            #         f"Error: {e}"
-            #     )
+                logger.info(f"Confirmation mail send to {email} successfully")
+
+            except IntegrityError as e:
+                logger.error(
+                    f"Email sending failed!"
+                    f"Error: {e}"
+                )
 
         except IntegrityError as e:
             logger.warning(

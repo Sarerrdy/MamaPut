@@ -1,9 +1,10 @@
+from flask import Flask
+from flask_mail import Mail
 from constants import PROJECT_ROOT, MAMAPUT_DATABASE
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from flask_mail import Mail, Message
-from flask import Flask
+
 
 import logging
 import sys
@@ -29,21 +30,9 @@ load_dotenv()  # Load environment variables from .env file
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 app = Flask(__name__)
-mail = Mail(app)
+# mail = Mail(app)
 api = Api(app)
 
-
-# def create_app(db_location):
-# def create_app():  # prooduction code
-# """
-# Function that creates our Flask application.
-# This function creates the Flask app, Flask-RESTful API,
-# and Flask-SQLAlchemy connection
-
-# :param db_location: Connection string to the database
-# :return: Initialized Flask app
-# """
-# This configures our logging, writes all logs to file "mamaput_api.log"
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s %(name)-12s %(levelname)-8s %(message)s",
@@ -56,18 +45,6 @@ logging.basicConfig(
 app.config['SECRET_KEY'] = getenv(
     'SECRET_KEY', 'default_secret_key')  # Production config
 
-# Configure the Mail settings
-# Replace with your mail server
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-# app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-# Replace with your email
-app.config['MAIL_USERNAME'] = 'mamaputapp@gmail.com'
-# Replace with your email password
-# app.config['MAIL_PASSWORD'] = 'rvqlqkmnqjlabdbi'
-app.config['MAIL_PASSWORD'] = 'rvql qkmn qjla bdbi'
 
 # CORS(app, resources={r"/api/*": {"origins": "*"}})
 # CORS(app, resources={
@@ -110,26 +87,15 @@ api.add_resource(CartsResource, CART_ENDPOINT,
                  f"{CART_ENDPOINT}/<id>")
 # return app
 
-# email = "sarerrdy4live@gmail.com"
-
-# # Send a confirmation email
-# msg = Message(
-#     'Order Confirmation',
-#     sender=app.config['MAIL_USERNAME'],
-#     recipients=[email])
-
-# msg.body = """Thank you for your order!
-#             Your order has been placed successfully with #Order_Number: .
-#             We appreciate your business and will notify you once your order has shipped.
-#             If you have any questions, feel free to contact us.
-
-#             You can view your order history in your profile page at: chttps://mamaputapp.onrender.com/profile
-
-#             Best regards,
-#             MamaPut..
-#             serving African
-#             """
-# mail.send(msg)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+# Use your actual Gmail address
+app.config['MAIL_USERNAME'] = 'mamaputapp@gmail.com'
+# Use your generated App Password
+app.config['MAIL_PASSWORD'] = 'rvql qkmn qjla bdbi'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
 
 
 # app = create_app(f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")
