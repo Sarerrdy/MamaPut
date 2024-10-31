@@ -1,5 +1,9 @@
-from flask import Flask
-from flask_mail import Mail
+from email.mime.text import MIMEText
+import smtplib
+from sqlalchemy.exc import IntegrityError
+from flask import Flask, abort, jsonify, request
+# from flask_mail import Mail
+import requests
 from constants import PROJECT_ROOT, MAMAPUT_DATABASE
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -12,6 +16,9 @@ from os import path, getenv
 from database import db
 from dotenv import load_dotenv
 
+from models.order import Order
+from models.user import User
+from models.payment import Payment
 
 from resources.user_resource import UsersResource, USERS_ENDPOINT
 from resources.address_resource import AddressesResource, ADDRESSES_ENDPOINT
@@ -28,6 +35,7 @@ from resources.order_details_resource import OrderDetailsResource, \
 
 load_dotenv()  # Load environment variables from .env file
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 # mail = Mail(app)
@@ -41,9 +49,10 @@ logging.basicConfig(
         "mamaput_api.log"), logging.StreamHandler()],
 )
 
-# app.config['SECRET_KEY'] = 'QZ0_IC8I_I1ueVP9Gl5bNUZbFv2hyfkcuOhWVfAWfUQ'
+
 app.config['SECRET_KEY'] = getenv(
     'SECRET_KEY', 'default_secret_key')  # Production config
+paystack_secret_key = getenv('PAYSTACK_SECRET_KEY')
 
 
 # CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -87,18 +96,112 @@ api.add_resource(CartsResource, CART_ENDPOINT,
                  f"{CART_ENDPOINT}/<id>")
 # return app
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-# Use your actual Gmail address
-app.config['MAIL_USERNAME'] = 'mamaputapp@gmail.com'
-# Use your generated App Password
-app.config['MAIL_PASSWORD'] = 'rvql qkmn qjla bdbi'
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-mail = Mail(app)
+# app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+# app.config['MAIL_PORT'] = 587
+# # Use your actual Gmail address
+# app.config['MAIL_USERNAME'] = 'mamaputapp@gmail.com'
+# # Use your generated App Password
+# app.config['MAIL_PASSWORD'] = 'rvql qkmn qjla bdbi'
+# app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USE_SSL'] = False
+# mail = Mail(app)
 
+# Payment Callback
+
+
+@app.route('/payment/callback', methods=['GET', 'POST'])
+def payment_callback():
+    reference = request.args.get('reference')
+    logger.info("PAYMENT_CALLBACK CALLED")
+    if reference:
+        payment = Payment.query.filter_by(reference=reference).first()
+        if payment and payment.payment_status == 'success':
+            return jsonify({"status": "success", "message": "Payment verified"}), 200
+    return jsonify({"status": "failed", "message": "Invalid reference"}), 400
+
+
+# Payment Webhook
+@app.route('/payment/webhook', methods=['POST'])
+def payment_webhook():
+    payload = request.get_json()
+    if payload and payload['event'] == 'charge.success':
+        reference = payload['data']['reference']
+        amount = payload['data']['amount']
+        # order_id = payload['data']['order_id']
+
+        # Verify the payment with Paystack
+        if not verify_payment(reference):
+            abort(400, message="Payment verification failed!")
+
+        payment = Payment.query.filter_by(reference=reference).first()
+        if payment:
+            payment.amount = amount
+            payment.payment_status = 'success'
+            db.session.commit()
+
+            # send a successful mail
+            try:
+                logger.info("EMAIL TRY BLOCK")
+                order = Order.query.filter_by(
+                    order_id=payment.order_id).first()
+                logger.info(f"ORDER_ID {payment.order_id}")
+                logger.info(f"ORDER {order}")
+                user = User.query.filter_by(user_id=order.user_id).first()
+                email = user.email
+                logger.info(f"Attempting to send mail to {email}")
+                # config mail and password
+
+                sender = getenv('MAIL_USERNAME')  # Production config
+                password = getenv('MAIL_PASSWORD')  # Production config
+
+                # Create the message
+                msg = MIMEText(
+                    f""" Your order has been placed successfully with #Order_Number: {payment.order_id}.\nWe will notify you once your order has shipped.\nIf you have any questions, feel free to contact us.\nYou can view your order history by signing into your profile page at: https://mamaputapp.onrender.com/profile\nBest regards, MamaPut""")
+                msg['Subject'] = 'Order Confirmation'
+                # msg['From'] = 'mamaputwebapp@gmail.com'
+                msg['From'] = sender
+                msg['To'] = email
+
+                # Send the email
+                server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+                server.login(sender, password)
+                # server.login("mamaputwebapp@gmail.com",
+                #              "dlyz dxnr jywr yeiu")
+                server.sendmail(
+                    from_addr="mamaputwebapp@gmail.com",
+                    to_addrs=[email],
+                    msg=msg.as_string()
+                )
+                server.quit()
+
+                logger.info(
+                    f"Confirmation mail sent to {email} successfully")
+
+            except IntegrityError as e:
+                logger.error(
+                    f"Email sending failed!"
+                    f"Error: {e}"
+                )
+
+            return jsonify({"status": "success"}), 200
+    return jsonify({"status": "failed", "message": "Invalid event"}), 400
+
+
+def verify_payment(reference):
+    headers = {
+        "Authorization": f"Bearer {paystack_secret_key}",
+        "Content-Type": "application/json",
+    }
+    url = f"https://api.paystack.co/transaction/verify/{reference}"
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        response_data = response.json()
+        if response_data['data']['status'] == 'success':
+            return True
+        return False
 
 # app = create_app(f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")
+
 
 if __name__ == "__main__":
     # app = create_app(f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}")

@@ -15,6 +15,7 @@ class PaymentSchema(Schema):
     amount = fields.Float(allow_none=False)
     payment_status = fields.String(allow_none=False)
     payment_date = fields.DateTime(allow_none=True)
+    reference = fields.String(required=True)
     order_id = fields.Integer()
 
     order = fields.Nested(OrderSchema)

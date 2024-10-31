@@ -1,85 +1,78 @@
-import logging
 
-from flask import request
+import logging
+import os
+from flask import request, jsonify
 from flask_restful import Resource, abort
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm.exc import NoResultFound
-
+import requests
+from paystackapi.paystack import Paystack
 from database import db
 from models.payment import Payment
 from schemas.payment_schema import PaymentSchema
 
 PAYMENT_ENDPOINT = "/api/payments"
 logger = logging.getLogger(__name__)
+paystack_secret_key = os.getenv('PAYSTACK_SECRET_KEY')
+paystack = Paystack(secret_key=paystack_secret_key)
 
 
 class PaymentsResource(Resource):
-    def get(self, id=None):
-        """
-        PaymentsResource GET method. Retrieves all payments found in the
-        mamaput database. If this id is provided then the payment with the
-        associated payment_id is retrieved.
+    def post(self):
+        """ Create a new payment """
+        data = request.get_json()
+        reference = data.get('reference')
 
-        :param id: Payment ID to retrieve, this path parameter is optional
-        :return: Payment, 200 HTTP status code
-        """
-        if not id:
-            order_id = request.args.get("order_id")
-            logger.info(
-                f"Retrieving all payments, optionally filtered by "
-                f"order_id={order_id}"
-            )
+        # Verify the payment with Paystack
+        if not self.verify_payment(reference):
+            abort(400, message="Payment verification failed!")
 
-            return self._get_all_payments(order_id), 200
-
-        logger.info(f"Retrieving payment by id {id}")
-
+        payment = PaymentSchema().load(data)
+        db.session.add(payment)
         try:
-            return self._get_payment_by_id(id), 200
-        except NoResultFound:
-            abort(404, message="payment not found")
+            db.session.commit()
+            return PaymentSchema().dump(payment), 201
+        except IntegrityError:
+            db.session.rollback()
+            abort(409, message="Payment already exists")
 
-    def _get_payment_by_id(self, payment_id):
-        """retrieve payment by payment id"""
-        payment = Payment.query.filter_by(payment_id=payment_id).first()
-        payment_json = PaymentSchema().dump(payment)
+    def verify_payment(self, reference):
+        headers = {
+            "Authorization": f"Bearer {paystack_secret_key}",
+            "Content-Type": "application/json",
+        }
+        url = f"https://api.paystack.co/transaction/verify/{reference}"
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            response_data = response.json()
+            if response_data['data']['status'] == 'success':
+                return True
+            return False
 
-        if not payment_json:
-            raise NoResultFound()
-
-        logger.info(f"Payment retrieved from database {payment_json}")
-        return payment_json
-
-    def _get_all_payments(self, order_id):
-        """retrieve all payments"""
-        if order_id:
-            payments = Payment.query.filter_by(order_id=order_id).all()
+    def get(self, id=None):
+        """ Retrieve all payments or a specific payment by id """
+        if id:
+            payment = Payment.query.get(id)
+            if not payment:
+                abort(404, message="Payment not found")
+            return PaymentSchema().dump(payment)
         else:
             payments = Payment.query.all()
+            return [PaymentSchema().dump(payment) for payment in payments]
 
-        payments_json = [
-            PaymentSchema().dump(payment) for payment in payments]
+    def put(self):
+        """ Handle Paystack webhooks """
+        payload = request.get_json()
+        if payload['event'] == 'charge.success':
+            data = payload['data']
+            payment_id = data['reference']
+            amount = data['amount']
+            payment_status = data['status']
 
-        logger.info("Payment successfully retrieved.")
-        return payments_json
-
-    def post(self):
-        """
-        paymentsResource POST method. Adds a new Payment to the database.
-
-        :return: Payment.payment_id, 201 HTTP status code.
-        """
-        payment = PaymentSchema().load(request.get_json())
-
-        try:
-            db.session.add(payment)
-            db.session.commit()
-        except IntegrityError as e:
-            logger.warning(
-                f"Integrity Error, this payment is already in the database. "
-                f"Error: {e}"
-            )
-
-            abort(500, message="Unexpected Error!")
-        else:
-            return payment.payment_id, 201
+            payment = Payment.query.filter_by(payment_id=payment_id).first()
+            if payment:
+                payment.amount = amount
+                payment.payment_status = payment_status
+                db.session.commit()
+            else:
+                abort(404, message="Payment not found")
+        return jsonify({"status": "success"})

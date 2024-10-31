@@ -25,6 +25,7 @@ google-auth-oauthlib = "==1.2.1"
 google-auth = "==2.35.0"
 google-auth-httplib2 = "==0.2.0"
 flask-oauthlib = "==0.9.6"
+paystackapi = "*"
 
 [requires]
 python_version = "3.11"

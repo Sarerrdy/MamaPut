@@ -72,7 +72,7 @@ class OrdersResource(Resource):
                 return self._verify_checker(checkerToken), 200
             if user_id:
                 # return all oders by this user
-                return self._get_order_by_userid(self, user_id), 200
+                return self._get_order_by_userid(user_id), 200
             return self._get_all_orders(status), 200
 
         logger.info(f"Retrieving orders by id {id}")
@@ -87,8 +87,7 @@ class OrdersResource(Resource):
         if order_id:
             order = Order.query.get_or_404(order_id)
             order_schema = OrderSchema()
-            order_json = order_schema.dump(order)
-            print(f"ORDER_JSON: {order_json}")
+            order_json = order_schema.dump(order)            
             logger.info(
                 "Orders successfully retrieved from  _get_order_by_id(self, order_id)")
             return order_json
@@ -218,35 +217,38 @@ class OrdersResource(Resource):
             # commit all datatset
             db.session.commit()
 
-            try:
-                user = User.query.get_or_404(order.user_id)
-                email = user.email
-                logger.info("Attempting to send mail")
+            if payment.payment_Method == "payondelivery":
+                try:
+                    user = User.query.get_or_404(order.user_id)
+                    email = user.email
+                    logger.info("Attempting to send mail")
 
-                # Create the message
-                msg = MIMEText(
-                    f""" Your order has been placed successfully with #Order_Number: {order.order_id}.\nWe will notify you once your order has shipped.\nIf you have any questions, feel free to contact us.\nYou can view your order history by signing into your profile page at: https://mamaputapp.onrender.com/profile\nBest regards, MamaPut""")
-                msg['Subject'] = 'Order Confirmation'
-                msg['From'] = 'mamaputwebapp@gmail.com'
-                msg['To'] = email
+                    # Create the message
+                    msg = MIMEText(
+                        f""" Your order has been placed successfully with #Order_Number: {order.order_id}.\nWe will notify you once your order has shipped.\nIf you have any questions, feel free to contact us.\nYou can view your order history by signing into your profile page at: https://mamaputapp.onrender.com/profile\nBest regards, MamaPut""")
+                    msg['Subject'] = 'Order Confirmation'
+                    msg['From'] = 'mamaputwebapp@gmail.com'
+                    msg['To'] = email
 
-                # Send the email
-                server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-                server.login("mamaputwebapp@gmail.com", "dlyz dxnr jywr yeiu")
-                server.sendmail(
-                    from_addr="mamaputwebapp@gmail.com",
-                    to_addrs=[email],
-                    msg=msg.as_string()
-                )
-                server.quit()
+                    # Send the email
+                    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+                    server.login("mamaputwebapp@gmail.com",
+                                 "dlyz dxnr jywr yeiu")
+                    server.sendmail(
+                        from_addr="mamaputwebapp@gmail.com",
+                        to_addrs=[email],
+                        msg=msg.as_string()
+                    )
+                    server.quit()
 
-                logger.info(f"Confirmation mail send to {email} successfully")
+                    logger.info(
+                        f"Confirmation mail send to {email} successfully")
 
-            except IntegrityError as e:
-                logger.error(
-                    f"Email sending failed!"
-                    f"Error: {e}"
-                )
+                except IntegrityError as e:
+                    logger.error(
+                        f"Email sending failed!"
+                        f"Error: {e}"
+                    )
 
         except IntegrityError as e:
             logger.warning(
@@ -255,4 +257,8 @@ class OrdersResource(Resource):
             )
             abort(500, message="Unexpected Error!")
         else:
-            return order.order_id, 201
+            if payment.payment_Method == "payondelivery":
+                return order.order_id, 201
+            else:
+                payment = PaymentSchema().dump(payment)
+                return payment

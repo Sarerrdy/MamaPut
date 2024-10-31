@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "09aa19dbab746e9c884f811476571738a8bdefd73547d25fdef4ffaa712b3313"
+            "sha256": "b956d1daaa49b393d5e0a77d239e5b84e5073b5744ff6a48219f54269c1f7577"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -505,6 +505,13 @@
             "markers": "python_version >= '3.8'",
             "version": "==24.1"
         },
+        "paystackapi": {
+            "hashes": [
+                "sha256:8035fa35e08ba32df4843b833992e737be0d993cce5ee09aee90c9f0ad40dc10"
+            ],
+            "index": "pypi",
+            "version": "==2.1.3"
+        },
         "proto-plus": {
             "hashes": [
                 "sha256:c91fc4a65074ade8e458e95ef8bac34d4008daa7cce4a12d6707066fca648961",
@@ -700,11 +707,11 @@
         },
         "werkzeug": {
             "hashes": [
-                "sha256:02c9eb92b7d6c06f31a782811505d2157837cea66aaede3e217c7c27c039476c",
-                "sha256:34f2371506b250df4d4f84bfe7b0921e4762525762bbd936614909fe25cd7306"
+                "sha256:1bc0c2310d2fbb07b1dd1105eba2f7af72f322e1e455f2f93c993bee8c8a5f17",
+                "sha256:a8dd59d4de28ca70471a34cba79bed5f7ef2e036a76b3ab0835474246eb41f8d"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==3.0.4"
+            "version": "==3.0.6"
         }
     },
     "develop": {
