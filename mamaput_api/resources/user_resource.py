@@ -40,16 +40,15 @@ def verify_auth_token(token):
     try:
         data = jwt.decode(token, current_app.config['SECRET_KEY'],
                           algorithms=['HS256'])
-        logger.info(f"DATA: {data}")
-        logger.info(f"DATA_USER.ID: {data['sub']}")
     except:
         return
     return User.query.filter_by(email=data['sub']).first()
     # User.query.filter_by(email=email).first()
 
+# stay login for 14 days
 
-def generate_auth_token(self, expires_in=300):
-    logger.info(f"USER_ID: {g.user.user_id}")
+
+def generate_auth_token(self, expires_in=1209600):
     return jwt.encode(
         {'sub': g.user.email, 'exp': time.time() + expires_in},
         current_app.config['SECRET_KEY'], algorithm='HS256')
@@ -183,16 +182,14 @@ class UsersResource(Resource):
     # Attempt login with email and password
 
     def login_with_username(self):
-        logger.info("LOGIN CALLED")
 
         req = request.get_json()
         data = req["user"]
-        logger.info(f"DATA: {data}")
+
         email = data['username']
         password = data['password']
 
-        logger.info(
-            f"User retrieved from database by email: {email}")
+        logger.info("User retrieved from database by email")
         verified_user = verify_password(email, password)
         token = generate_auth_token(1209600)  # 14 days
         address = Address.query.filter_by(
@@ -202,23 +199,16 @@ class UsersResource(Resource):
 
         if not verified_user or not token or not address:
             raise NoResultFound()
-        logger.info(f"User retrieved from database {address_json}")
-        logger.info(f"Token retrieved from database {token}")
         return [token, user_json, address_json], 200
         # return jsonify({"token": token, "user": user_json, "address": address_json}), 200
 
     # Attempt login with token
     def login_with_token(self, token):
-        logger.info(f"ENTER LOGIN_WITH_TOKEN_FUNCTION")
+
         if token is not None:
-            logger.info(f"TOKEN NOT NON")
             verified_token = verify_auth_token(token)
-            # logger.info(f"TOKEN VERIFIED: {verified_token}")
             if verified_token is not None:
-                logger.info(f"TOKEN VERIFIED-1: {verified_token}")
                 return True
             else:
-                logger.info(f"NON-TOKEN-2: {verified_token}")
                 return False
-        logger.info(f"NON-TOKEN-3")
         return False

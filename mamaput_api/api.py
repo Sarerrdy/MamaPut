@@ -59,7 +59,7 @@ paystack_secret_key = getenv('PAYSTACK_SECRET_KEY')
 # CORS(app, resources={
 #      r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
 CORS(app, resources={
-    r"/api/*": {"origins": ["https://mamaputapp.onrender.com", "http://localhost:4173", "http://localhost:5173"]}})
+    r"/api/*": {"origins": ["https://mamaputapp.onrender.com", "http://localhost:4173", "http://localhost:5173", "https://api.paystack.co"]}})
 
 db_location = f"sqlite:////{PROJECT_ROOT}/{MAMAPUT_DATABASE}"
 app.config["SQLALCHEMY_DATABASE_URI"] = db_location
