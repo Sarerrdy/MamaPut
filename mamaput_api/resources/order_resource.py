@@ -5,12 +5,14 @@ from flask import request
 from flask_restful import Resource, abort, current_app
 
 # from api import mail
+from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime, timedelta
 import jwt
 
 from database import db
+from mailer import send_new_order_notification, send_order_confirmation, send_order_status_update
 from models.order import Order
 from models.menu import Menu
 from models.user import User
@@ -87,7 +89,7 @@ class OrdersResource(Resource):
         if order_id:
             order = Order.query.get_or_404(order_id)
             order_schema = OrderSchema()
-            order_json = order_schema.dump(order)            
+            order_json = order_schema.dump(order)
             logger.info(
                 "Orders successfully retrieved from  _get_order_by_id(self, order_id)")
             return order_json
@@ -139,6 +141,8 @@ class OrdersResource(Resource):
             return True
         logger.info("Token failed")
         return False
+
+    # Post Menthod
 
     def post(self):
         """
@@ -219,30 +223,53 @@ class OrdersResource(Resource):
 
             if payment.payment_Method == "payondelivery":
                 try:
+                    # Send confirmation email to user and notification to admin
                     user = User.query.get_or_404(order.user_id)
-                    email = user.email
-                    logger.info("Attempting to send mail")
+                    send_order_confirmation(user.email, order.order_id)
+                    send_new_order_notification(order.order_id)
 
-                    # Create the message
-                    msg = MIMEText(
-                        f""" Your order has been placed successfully with #Order_Number: {order.order_id}.\nWe will notify you once your order has shipped.\nIf you have any questions, feel free to contact us.\nYou can view your order history by signing into your profile page at: https://mamaputapp.onrender.com/profile\nBest regards, MamaPut""")
-                    msg['Subject'] = 'Order Confirmation'
-                    msg['From'] = 'mamaputwebapp@gmail.com'
-                    msg['To'] = email
+                    # user = User.query.get_or_404(order.user_id)
+                    # email = user.email
+                    # logger.info("Attempting to send mail")
 
-                    # Send the email
-                    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-                    server.login("mamaputwebapp@gmail.com",
-                                 "dlyz dxnr jywr yeiu")
-                    server.sendmail(
-                        from_addr="mamaputwebapp@gmail.com",
-                        to_addrs=[email],
-                        msg=msg.as_string()
-                    )
-                    server.quit()
+                    # # Create the message for the user
+                    # msg = MIMEText(
+                    #     f""" Your order has been placed successfully with Order_Number: #{order.order_id}.\nWe will notify you once your order has shipped.\nIf you have any questions, feel free to contact us.\nYou can view your order history by signing into your profile page at: https://mamaputapp.onrender.com/profile\nBest regards, MamaPut""")
+                    # msg['Subject'] = 'Order Confirmation'
+                    # msg['From'] = 'mamaputwebapp@gmail.com'
+                    # msg['To'] = email
 
-                    logger.info(
-                        f"Confirmation mail send to {email} successfully")
+                    # # Send the email to the user
+                    # server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+                    # server.login("mamaputwebapp@gmail.com",
+                    #              "dlyz dxnr jywr yeiu")
+                    # server.sendmail(
+                    #     from_addr="mamaputwebapp@gmail.com",
+                    #     to_addrs=[email],
+                    #     msg=msg.as_string()
+                    # )
+                    # server.quit()
+
+                    # logger.info(
+                    #     f"Confirmation mail send to {email} successfully")
+
+                    # # Create the message for the admin
+                    # admin_msg = MIMEText(
+                    #     f"A new order has been received with order number: #{order.order_id}")
+                    # admin_msg['Subject'] = 'New Order Received'
+                    # admin_msg['From'] = 'mamaputwebapp@gmail.com'
+                    # admin_msg['To'] = 'mamaputwebapp@gmail.com'
+
+                    # # Send the email to the admin
+                    # server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+                    # server.login("mamaputwebapp@gmail.com",
+                    #              "dlyz dxnr jywr yeiu")
+                    # server.sendmail(
+                    #     "mamaputwebapp@gmail.com", ["mamaputwebapp@gmail.com"], admin_msg.as_string())
+                    # server.quit()
+
+                    # logger.info(
+                    #     "Notification mail sent to mamaputwebapp@gmail.com successfully")
 
                 except IntegrityError as e:
                     logger.error(
@@ -262,3 +289,39 @@ class OrdersResource(Resource):
             else:
                 payment = PaymentSchema().dump(payment)
                 return payment
+
+    # Put endpoint
+    def put(self, id):
+        """
+        OrdersResource PUT method. Updates an order item in the database.
+
+        :param order_id: ID of the order item to update.
+        :return: Updated order item JSON, 200 HTTP status code if successful,
+        404 if not found.
+        """
+        order = Order.query.filter_by(order_id=id).first()
+        if order is None:
+            abort(404, message="Order item not found!")
+
+        try:
+            order_data = request.get_json()
+            loaded_order = OrderSchema().load(order_data, partial=True)
+            old_status = order.status  # Track the old status
+            order.status = loaded_order.status
+            # Update other fields as necessary
+            db.session.commit()
+
+            # Notify the user if the status has changed
+            if old_status != order.status:
+                user = User.query.get_or_404(order.user_id)
+                send_order_status_update(
+                    user.email, order.order_id, order.status)
+
+        except IntegrityError as e:
+            logger.warning(
+                f"Integrity Error, could not update order item. "
+                f"Error: {e}"
+            )
+            abort(500, message="Unexpected Error!")
+        else:
+            return (OrderSchema().dump(order)), 200

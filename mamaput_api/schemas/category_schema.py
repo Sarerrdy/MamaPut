@@ -11,7 +11,7 @@ class CategorySchema(Schema):
 
     category_id = fields.Integer()
     name = fields.String(allow_none=False)
-    category_url = fields.Url(allow_none=False)
+    category_url = fields.String(allow_none=False)
 
     @post_load
     def make_category(self, data, **kwargs):

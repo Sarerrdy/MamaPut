@@ -76,6 +76,7 @@ class MenusResource(Resource):
         :return: menu.menu_id, 201 HTTP status code.
         """
         menu = MenuSchema().load(request.get_json())
+        logger.info(f"MENU {request.get_json()}")
 
         try:
             db.session.add(menu)
@@ -92,14 +93,14 @@ class MenusResource(Resource):
 
     # delete endpoint
 
-    def delete(self, menu_id):
+    def delete(self, id):
         """
         MenusResource DELETE method. Deletes a menu item from the database.
 
         :param menu_id: ID of the menu item to delete.
         :return: 200 HTTP status code if successful, 404 if not found.
         """
-        menu = Menu.query.filter_by(menu_id=menu_id).first()
+        menu = Menu.query.filter_by(menu_id=id).first()
         if menu is None:
             abort(404, message="Menu item not found!")
 
@@ -118,7 +119,7 @@ class MenusResource(Resource):
 
     # Put endpoint
 
-    def put(self, menu_id):
+    def put(self, id):
         """
         MenusResource PUT method. Updates a menu item in the database.
 
@@ -126,13 +127,19 @@ class MenusResource(Resource):
         :return: Updated menu item JSON, 200 HTTP status code if successful,
         404 if not found.
         """
-        menu = Menu.query.filter_by(menu_id=menu_id).first()
+        menu = Menu.query.filter_by(menu_id=id).first()
         if menu is None:
             abort(404, message="Menu item not found!")
 
         try:
             menu_data = request.get_json()
-            menu = MenuSchema().load(menu_data, instance=menu, partial=True)
+            loaded_menu = MenuSchema().load(menu_data, partial=True)
+            menu.name = loaded_menu.name
+            menu.description = loaded_menu.description
+            menu.price = loaded_menu.price
+            menu.stock_quantity = loaded_menu.stock_quantity
+            menu.status = loaded_menu.status
+            menu.menu_url = loaded_menu.menu_url
             db.session.commit()
         # except ValidationError as err:
         #     abort(400, message=err.messages)

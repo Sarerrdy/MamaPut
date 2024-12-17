@@ -75,3 +75,49 @@ class CategoriesResource(Resource):
             abort(500, message="Unexpected Error!")
         else:
             return category.category_id, 201
+
+    def put(self, id):
+        """ CategoriesResource PUT method. Updates a category in the database.
+        :param category_id: ID of the category to update.
+        :return: Updated category JSON, 200 HTTP status code if successful, 404 if not found.
+        """
+        category = Category.query.filter_by(category_id=id).first()
+        if category is None:
+            abort(404, message="Category not found!")
+
+        try:
+            category_data = request.get_json()
+
+            loaded_data = CategorySchema().load(category_data, partial=True)
+
+            category.name = loaded_data.name
+            category.category_url = loaded_data.category_url
+            db.session.commit()
+
+        except IntegrityError as e:
+            logger.warning(
+                f"Integrity Error, could not update category. Error: {e}")
+            abort(500, message="Unexpected Error!")
+        else:
+            return (CategorySchema().dump(category)), 200
+
+    def delete(self, id):
+        """ CategoriesResource DELETE method. Deletes a category from the database.
+
+        :param category_id: ID of the category to delete.
+        :return: 200 HTTP status code if successful, 404 if not found.
+        """
+
+        category = Category.query.filter_by(category_id=id).first()
+        if category is None:
+            abort(404, message="Category not found!")
+        try:
+            db.session.delete(category)
+            db.session.commit()
+        except IntegrityError as e:
+            logger.warning(
+                f"Integrity Error, could not delete category. Error: {e}")
+            abort(500, message="Unexpected Error!")
+        else:
+            logger.info("Category deleted successfully")
+            return {"message": "Category deleted successfully"}, 200

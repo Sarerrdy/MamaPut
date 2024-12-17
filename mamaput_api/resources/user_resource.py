@@ -9,9 +9,12 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from database import db
+from models.role import Role
+from models.user_role import UserRole
 from models.user import User
 from models.address import Address
 from schemas.user_rel_schemas import UserSchema, AddressSchema
+from schemas.role_schema import RoleSchema
 
 
 from flask_httpauth import HTTPBasicAuth
@@ -108,6 +111,84 @@ class UsersResource(Resource):
         except Exception as e:
             return {"error": str(e)}, 400
 
+    # Add user role assignment in the register method
+    def register(self):
+        try:
+            req = request.get_json()
+            data = req["user"]
+            email = data['email']
+            password = data['password']
+            user = User(
+                title=data['title'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                gender=data['gender'],
+                email=email,
+                password=generate_password_hash(password),
+                phone=data['phone'],
+                join_date=datetime.now(),
+                user_url=""
+            )
+            if email is None or password is None:
+                abort(400, "missing username or password")
+            if User.query.filter_by(email=email).first() is not None:
+                abort(400, "user already exist")
+
+            # user_json = UserSchema().dump(user)
+            # user_json = UserSchema().load(user_json)
+            db.session.add(user)
+            db.session.commit()
+
+            # Assign default role (User) to the new user
+            default_role = Role.query.filter_by(role_name='User').first()
+            user_role = UserRole(user_id=user.user_id,
+                                 role_id=default_role.role_id)
+            # user_role.save()
+            db.session.add(user_role)
+
+            address = Address(
+                address=data['address'],
+                town=data['town'],
+                state=data['state'],
+                lga=data['lga'],
+                landmark=data['landmark'],
+                user_id=user.user_id
+            )
+            address_json = AddressSchema().dump(address)
+            address_json = AddressSchema().load(address_json)
+            db.session.add(address_json)
+            db.session.commit()
+
+            # user_json = UserSchema().dump(user)
+
+            return user.email, 201
+        except IntegrityError as e:
+            abort(500, message=f"Unexpected Error: {e}!")
+
+    # Method to assign roles (only accessible by Admin)
+    def assign_role(self, user_id, role_name):
+        admin_email = 'mamaputwebapp@gmail.com'
+        admin_user = User.query.filter_by(email=admin_email).first()
+
+        if not admin_user:
+            return {"message": "Admin user not found!"}, 400
+
+        if g.user.email != admin_email:
+            return {"message": "Only admin can assign roles!"}, 403
+
+        user = User.query.filter_by(user_id=user_id).first()
+        if not user:
+            return {"message": "User not found!"}, 400
+
+        role = Role.query.filter_by(role_name=role_name).first()
+        if not role:
+            return {"message": "Role not found!"}, 400
+
+        user_role = UserRole(user_id=user.user_id, role_id=role.role_id)
+        user_role.save()
+
+        return {"message": "Role assigned successfully!"}, 200
+
     def changepassword(self, id, json_data):
         """Change password"""
 
@@ -133,51 +214,6 @@ class UsersResource(Resource):
 
         except Exception as e:
             return {"error": str(e)}, 400
-
-    def register(self):
-        try:
-            req = request.get_json()
-            data = req["user"]
-            email = data['email']
-            password = data['password']
-            user = User(
-                title=data['title'],
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                gender=data['gender'],
-                email=email,
-                password=generate_password_hash(password),
-                phone=data['phone'],
-                join_date=datetime.now(),
-                # user_url=data['user_url']
-                user_url=""
-            )
-            if email is None or password is None:
-                # missing arguments
-                abort(400, "missing username or password")
-            if User.query.filter_by(email=email).first() is not None:
-                abort(400, "user already exist")    # existing user
-            user_json = UserSchema().dump(user)
-            user_json = UserSchema().load(user_json)
-            db.session.add(user_json)
-            db.session.commit()
-
-            address = Address(
-                address=data['address'],
-                town=data['town'],
-                state=data['state'],
-                lga=data['lga'],
-                landmark=data['landmark'],
-                user_id=user_json.user_id
-            )
-            address_json = AddressSchema().dump(address)
-            address_json = AddressSchema().load(address_json)
-            db.session.add(address_json)
-            db.session.commit()
-
-            return user.email, 201
-        except IntegrityError as e:
-            abort(500, message=f"Unexpected Error: {e}!")
 
     # Attempt login with email and password
 

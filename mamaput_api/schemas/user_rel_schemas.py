@@ -1,4 +1,5 @@
-from marshmallow import Schema, fields, post_load
+from marshmallow import EXCLUDE, Schema, fields, post_load
+from schemas.role_schema import RoleSchema
 from models.user import User
 from models.address import Address
 # from schemas.address_schema import AddressSchema
@@ -12,6 +13,9 @@ class UserSchema(Schema):
     Marshmallow schema used for loading/dumping Users
     """
 
+    class Meta:
+        unknown = EXCLUDE  # Ignore unknown fields
+
     user_id = fields.Integer(allow_none=True)
     title = fields.String(allow_none=False)
     first_name = fields.String(allow_none=False)
@@ -22,6 +26,8 @@ class UserSchema(Schema):
     phone = fields.Integer(allow_none=False)
     join_date = fields.DateTime(allow_none=True)
     user_url = fields.String(allow_none=True)
+    # roles = fields.Nested('RoleSchema', many=True, dump_only=True)
+    roles = fields.List(fields.Nested(RoleSchema), dump_only=True)
 
     # addresses = fields.Nested(AddressSchema(), dump_only=True)
 

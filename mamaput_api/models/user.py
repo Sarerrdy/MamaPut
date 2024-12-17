@@ -20,6 +20,9 @@ class User(db.Model):
     phone = db.Column(db.Integer, nullable=False)
     join_date = db.Column(db.DateTime,  default=db.func.now(), nullable=True)
     user_url = db.Column(db.String(), nullable=True)
+    roles = db.relationship(
+        'Role', secondary='user_roles', back_populates='users')
+    # roles = db.Column(db.String(), default='User')  # Default role attribute
 
     addresses = db.relationship(
         "Address", back_populates="user", lazy=True)

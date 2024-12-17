@@ -27,6 +27,7 @@ google-auth-httplib2 = "==0.2.0"
 flask-oauthlib = "==0.9.6"
 paystackapi = "*"
 requests = "*"
+alembic = "*"
 
 [requires]
 python_version = "3.11"
