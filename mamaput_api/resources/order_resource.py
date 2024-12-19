@@ -228,49 +228,6 @@ class OrdersResource(Resource):
                     send_order_confirmation(user.email, order.order_id)
                     send_new_order_notification(order.order_id)
 
-                    # user = User.query.get_or_404(order.user_id)
-                    # email = user.email
-                    # logger.info("Attempting to send mail")
-
-                    # # Create the message for the user
-                    # msg = MIMEText(
-                    #     f""" Your order has been placed successfully with Order_Number: #{order.order_id}.\nWe will notify you once your order has shipped.\nIf you have any questions, feel free to contact us.\nYou can view your order history by signing into your profile page at: https://mamaputapp.onrender.com/profile\nBest regards, MamaPut""")
-                    # msg['Subject'] = 'Order Confirmation'
-                    # msg['From'] = 'mamaputwebapp@gmail.com'
-                    # msg['To'] = email
-
-                    # # Send the email to the user
-                    # server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-                    # server.login("mamaputwebapp@gmail.com",
-                    #              "dlyz dxnr jywr yeiu")
-                    # server.sendmail(
-                    #     from_addr="mamaputwebapp@gmail.com",
-                    #     to_addrs=[email],
-                    #     msg=msg.as_string()
-                    # )
-                    # server.quit()
-
-                    # logger.info(
-                    #     f"Confirmation mail send to {email} successfully")
-
-                    # # Create the message for the admin
-                    # admin_msg = MIMEText(
-                    #     f"A new order has been received with order number: #{order.order_id}")
-                    # admin_msg['Subject'] = 'New Order Received'
-                    # admin_msg['From'] = 'mamaputwebapp@gmail.com'
-                    # admin_msg['To'] = 'mamaputwebapp@gmail.com'
-
-                    # # Send the email to the admin
-                    # server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-                    # server.login("mamaputwebapp@gmail.com",
-                    #              "dlyz dxnr jywr yeiu")
-                    # server.sendmail(
-                    #     "mamaputwebapp@gmail.com", ["mamaputwebapp@gmail.com"], admin_msg.as_string())
-                    # server.quit()
-
-                    # logger.info(
-                    #     "Notification mail sent to mamaputwebapp@gmail.com successfully")
-
                 except IntegrityError as e:
                     logger.error(
                         f"Email sending failed!"

@@ -58,6 +58,13 @@ def generate_auth_token(self, expires_in=1209600):
 
 
 class UsersResource(Resource):
+    def get(self, id):
+        """ UsersResource GET method. Retrieves the role of a user.
+        :param user_id: ID of the user.
+        :return: User role data and HTTP status code.
+        """
+        return self.get_user_role(id)
+
     def post(self):
         """
         UsersResource POST method. Adds a new User to the database.
@@ -189,6 +196,28 @@ class UsersResource(Resource):
 
         return {"message": "Role assigned successfully!"}, 200
 
+    def get_user_role(self, user_id):
+        """
+        Get the role of a user by their user_id.
+        :param user_id: ID of the user.
+        :return: Role of the user or an error message.
+        """
+        try:
+            user_role = UserRole.query.filter_by(user_id=user_id).first()
+            if not user_role:
+                return {"message": "User role not found!"}, 404
+
+            role = Role.query.filter_by(role_id=user_role.role_id).first()
+            if not role:
+                return {"message": "Role not found!"}, 404
+
+            role_schema = RoleSchema()
+            role_data = role_schema.dump(role)
+
+            return role_data
+        except Exception as e:
+            return {"error": str(e)}, 400
+
     def changepassword(self, id, json_data):
         """Change password"""
 
@@ -232,10 +261,12 @@ class UsersResource(Resource):
             user_id=verified_user.user_id).first()
         address_json = AddressSchema().dump(address)
         user_json = UserSchema().dump(verified_user)
+        role = self.get_user_role(verified_user.user_id)
+        role_json = RoleSchema().dump(role)
 
         if not verified_user or not token or not address:
             raise NoResultFound()
-        return [token, user_json, address_json], 200
+        return [token, user_json, address_json, role_json], 200
         # return jsonify({"token": token, "user": user_json, "address": address_json}), 200
 
     # Attempt login with token

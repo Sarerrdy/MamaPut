@@ -10,7 +10,7 @@ pytest-cov = "==4.1.0"
 pytest-sugar = "==1.0.0"
 
 [packages]
-flask = "==3.0.3"
+flask = "*"
 flask-restful = "==0.3.10"
 flask-sqlalchemy = "==3.1.1"
 marshmallow = "==3.22.0"
