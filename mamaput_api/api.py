@@ -1,7 +1,5 @@
-from mailer import send_order_confirmation, send_new_order_notification, send_order_status_update
-from email.mime.text import MIMEText
+from mailer import send_order_confirmation, send_new_order_notification
 import os
-import smtplib
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, abort, jsonify, request
 # from flask_mail import Mail
@@ -34,6 +32,7 @@ from resources.shipping_info_resource import ShippingInfoResource, \
     SHIPPING_ENDPOINT
 from resources.order_details_resource import OrderDetailsResource, \
     ORDERDETAILS_ENDPOINT
+from resources.role_resource import RolesResource, ROLES_ENDPOINT
 
 load_dotenv()  # Load environment variables from .env file
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -83,11 +82,22 @@ app.config["SQLALCHEMY_DATABASE_URI"] = db_location
 JWTManager(app)
 db.init_app(app)
 
+
+# api.py
 api.add_resource(UsersResource, USERS_ENDPOINT,
-                 f"{USERS_ENDPOINT}/<id>", f"{USERS_ENDPOINT}/login")
+                 f"{USERS_ENDPOINT}/<int:id>",
+                 f"{USERS_ENDPOINT}/login",
+                 f"{USERS_ENDPOINT}/assign_role",
+                 f"{USERS_ENDPOINT}/remove_role")
 api.add_resource(UsersResource, "/api/login", endpoint="login")
 api.add_resource(UsersResource, "/api/token", endpoint="token")
 api.add_resource(UsersResource, "/api/register", endpoint="register")
+api.add_resource(UsersResource, "/api/assign_role", endpoint="assign_role")
+api.add_resource(UsersResource, "/api/remove_role", endpoint="remove_role")
+
+api.add_resource(RolesResource, ROLES_ENDPOINT)
+# api.add_resource(RolesResource, ROLES_ENDPOINT,  f"{ROLES_ENDPOINT}/<int:id>")
+
 api.add_resource(AddressesResource, ADDRESSES_ENDPOINT,
                  f"{ADDRESSES_ENDPOINT}/<id>")
 api.add_resource(CategoriesResource, CATEGORIES_ENDPOINT,

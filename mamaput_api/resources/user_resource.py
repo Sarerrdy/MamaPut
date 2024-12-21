@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 import time
+import json
 
 from flask import request, g
 from flask_restful import Resource, current_app, abort
@@ -58,12 +59,20 @@ def generate_auth_token(self, expires_in=1209600):
 
 
 class UsersResource(Resource):
-    def get(self, id):
-        """ UsersResource GET method. Retrieves the role of a user.
-        :param user_id: ID of the user.
-        :return: User role data and HTTP status code.
-        """
-        return self.get_user_role(id)
+    def get(self, id=None):
+        if id is None:
+            return self.get_all_users()
+        return self.get_user_roles(id)
+
+    def get_all_users(self):
+        try:
+            users = User.query.all()
+            user_schema = UserSchema(many=True)
+            users_data = user_schema.dump(users)
+            return users_data, 200
+        except Exception as e:
+            logger.error(f"Error retrieving users: {e}")
+            return {"error": str(e)}, 500
 
     def post(self):
         """
@@ -72,7 +81,6 @@ class UsersResource(Resource):
         :return: User.user_id, 201 HTTP status code.
         """
         user_data = request.get_json()
-
         if request.endpoint == "login":
             return self.login_with_username()
         elif request.endpoint == "token":
@@ -80,8 +88,16 @@ class UsersResource(Resource):
             return self.login_with_token(token)
         elif request.endpoint == "register":
             return self.register()
+        # elif request.endpoint == "assign_role":
+        #     user_id = user_data['userId']
+        #     role_name = user_data['roleName']
+        #     return self.assign_role(user_id, role_name)
+        # elif request.endpoint == "remove_role":
+        #     user_id = user_data['userId']
+        #     role_name = user_data['roleName']
+        #     return self.remove_role(user_id, role_name)
 
-    def put(self, id):
+    def put(self):
         """
         UsersResource PUT method. Updates existing user in the database.
         :param user_id: ID of the user to be updated.
@@ -89,8 +105,19 @@ class UsersResource(Resource):
         """
 
         try:
-
             json_data = request.get_json(force=True)
+
+            if request.endpoint == "assign_role":
+                user_id = json_data['userId']
+                role_name = json_data['roleName']
+                return self.assign_role(user_id, role_name)
+
+            if request.endpoint == "remove_role":
+                user_id = json_data['userId']
+                role_name = json_data['roleName']
+                return self.remove_role(user_id, role_name)
+
+            # json_data = request.get_json(force=True)
             if not json_data:
                 return ("No input data provided")
 
@@ -172,16 +199,24 @@ class UsersResource(Resource):
         except IntegrityError as e:
             abort(500, message=f"Unexpected Error: {e}!")
 
-    # Method to assign roles (only accessible by Admin)
+    # user_resource.py
+
     def assign_role(self, user_id, role_name):
-        admin_email = 'mamaputwebapp@gmail.com'
-        admin_user = User.query.filter_by(email=admin_email).first()
+        user = User.query.filter_by(user_id=user_id).first()
+        if not user:
+            return {"message": "User not found!"}, 400
+        role = Role.query.filter_by(role_name=role_name).first()
+        if not role:
+            return {"message": "Role not found!"}, 400
 
-        if not admin_user:
-            return {"message": "Admin user not found!"}, 400
+        user_role = UserRole(user_id=user.user_id, role_id=role.role_id)
+        db.session.add(user_role)
+        db.session.commit()
+        return {"message": "Role assigned successfully!"}, 200
 
-        if g.user.email != admin_email:
-            return {"message": "Only admin can assign roles!"}, 403
+    def remove_role(self, user_id, role_name):
+        if role_name == 'User':
+            return {"message": "Default 'User' role cannot be removed"}, 400
 
         user = User.query.filter_by(user_id=user_id).first()
         if not user:
@@ -191,30 +226,36 @@ class UsersResource(Resource):
         if not role:
             return {"message": "Role not found!"}, 400
 
-        user_role = UserRole(user_id=user.user_id, role_id=role.role_id)
-        user_role.save()
+        user_role = UserRole.query.filter_by(
+            user_id=user.user_id, role_id=role.role_id).first()
+        if user_role:
+            db.session.delete(user_role)
+            db.session.commit()
+            return {"message": "Role removed successfully!"}, 200
+        return {"message": "Role not assigned to user"}, 404
 
-        return {"message": "Role assigned successfully!"}, 200
-
-    def get_user_role(self, user_id):
+    def get_user_roles(self, user_id):
         """
-        Get the role of a user by their user_id.
+        Get the roles of a user by their user_id.
         :param user_id: ID of the user.
-        :return: Role of the user or an error message.
+        :return: List of roles of the user or an error message.
         """
         try:
-            user_role = UserRole.query.filter_by(user_id=user_id).first()
-            if not user_role:
-                return {"message": "User role not found!"}, 404
+            user_roles = UserRole.query.filter_by(user_id=user_id).all()
+            if not user_roles:
+                return {"message": "User roles not found!"}, 404
 
-            role = Role.query.filter_by(role_id=user_role.role_id).first()
-            if not role:
-                return {"message": "Role not found!"}, 404
+            roles = []
+            for user_role in user_roles:
+                role = Role.query.filter_by(role_id=user_role.role_id).first()
+                if role:
+                    roles.append(role.role_name)  # Add role name to the list
 
-            role_schema = RoleSchema()
-            role_data = role_schema.dump(role)
+            if not roles:
+                return {"message": "Roles not found!"}, 404
 
-            return role_data
+            return json.dumps(roles)
+
         except Exception as e:
             return {"error": str(e)}, 400
 
@@ -261,12 +302,12 @@ class UsersResource(Resource):
             user_id=verified_user.user_id).first()
         address_json = AddressSchema().dump(address)
         user_json = UserSchema().dump(verified_user)
-        role = self.get_user_role(verified_user.user_id)
-        role_json = RoleSchema().dump(role)
+        roles = self.get_user_roles(verified_user.user_id)
+        # role_json = RoleSchema().dump(roles)
 
         if not verified_user or not token or not address:
             raise NoResultFound()
-        return [token, user_json, address_json, role_json], 200
+        return [token, user_json, address_json, roles], 200
         # return jsonify({"token": token, "user": user_json, "address": address_json}), 200
 
     # Attempt login with token

@@ -1,14 +1,21 @@
+# role_resource.py
 from flask import request
 from flask_restful import Resource
 from models.role import Role
 from schemas.role_schema import RoleSchema
 
+ROLES_ENDPOINT = "/api/roles"
 
-class RoleResource(Resource):
-    def get(self):
-        roles = Role.query.all()
-        role_schema = RoleSchema(many=True)
-        return role_schema.dump(roles), 200
+
+class RolesResource(Resource):
+    def get(self, id=None):
+        try:
+            roles = Role.query.all()
+            role_schema = RoleSchema(many=True)
+            roles_data = role_schema.dump(roles)
+            return roles_data, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
 
     def post(self):
         data = request.get_json()
