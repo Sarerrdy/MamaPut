@@ -28,6 +28,7 @@ flask-oauthlib = "==0.9.6"
 paystackapi = "*"
 requests = "*"
 alembic = "*"
+flask-migrate = "*"
 
 [requires]
 python_version = "3.11"

@@ -1,83 +1,118 @@
 import logging
-
 from flask import request
 from flask_restful import Resource, abort
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm.exc import NoResultFound
-
-from database import db
+from marshmallow import ValidationError
 from models.review import Review
+from database import db
 from schemas.review_schema import ReviewSchema
 
-REVIEW_ENDPOINT = "/api/review"
+REVIEW_ENDPOINT = '/api/reviews'
+review_schema = ReviewSchema()
+reviews_schema = ReviewSchema(many=True)
+
+# Configure logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class ReviewsResource(Resource):
-    def get(self, id=None):
-        """
-        ReviewsResource GET method. Retrieves all reviews found in the
-        mamaput database. If this id is provided then the review with the
-        associated review_id is retrieved.
+    def get(self, menu_id):
+        reviews = Review.query.filter_by(menu_id=menu_id).all()
+        if not reviews:
+            return [], 200
+        return reviews_schema.dump(reviews), 200
 
-        :param id: review ID to retrieve, this path parameter is optional
-        :return: review, 200 HTTP status code
-        """
-        if not id:
-            user_id = request.args.get("user_id")
-            logger.info(
-                f"Retrieving all reviews, optionally filtered by "
-                f"user_id={user_id}"
-            )
-
-            return self._get_all_reviews(user_id), 200
-
-        logger.info(f"Retrieving reviews by id {id}")
-
+    def post(self, menu_id):
+        logger.info("POST request received for menu_id: %s", menu_id)
+        data = request.get_json()
+        user_id = data.get('user_id')
+        if not user_id:
+            logger.error("User ID is missing in the request")
+            abort(400, message="User ID is required")
+        logger.debug("User ID from request: %s", user_id)
+        existing_review = Review.query.filter_by(
+            menu_id=menu_id, user_id=user_id).first()
+        if existing_review:
+            logger.warning(
+                "User %s has already reviewed menu item %s", user_id, menu_id)
+            return {'message': 'User has already reviewed this item'}, 400
         try:
-            return self._get_review_by_id(id), 200
-        except NoResultFound:
-            abort(404, message="review not found")
-
-    def _get_review_by_id(self, review_id):
-        """retrieve review by review id"""
-        review = Review.query.filter_by(review_id=review_id).first()
-        review_json = ReviewSchema().dump(review)
-
-        if not review_json:
-            raise NoResultFound()
-
-        logger.info(f"Review retrieved from database {review_json}")
-        return review_json
-
-    def _get_all_reviews(self, user_id):
-        """retrieve all reviews"""
-        if user_id:
-            reviews = Review.query.filter_by(user_id=user_id).all()
-        else:
-            reviews = Review.query.all()
-        reviews_json = [ReviewSchema().dump(review) for review in reviews]
-
-        logger.info("Review successfully retrieved.")
-        return reviews_json
-
-    def post(self):
-        """
-        ReviewsResource POST method. Adds a new review to the database.
-
-        :return: Review.rewiew_id, 201 HTTP status code.
-        """
-        review = ReviewSchema().load(request.get_json())
-
+            review_data = review_schema.load(data)
+            logger.debug("Review data loaded: %s", review_data)
+        except ValidationError as err:
+            logger.error("Validation error: %s", err.messages)
+            return err.messages, 400
+        review = Review(**review_data)
+        db.session.add(review)
         try:
-            db.session.add(review)
             db.session.commit()
+            logger.info(
+                "Review created successfully for user %s and menu item %s", user_id, menu_id)
+        except Exception as e:
+            logger.error("Error committing to the database: %s", e)
+            db.session.rollback()
+            return {'message': 'Internal server error'}, 500
+        return review_schema.dump(review), 201
+
+    def put(self, menu_id):
+        """
+        ReviewsResource PUT method. Updates a review in the database.
+
+        :param menu_id: ID of the menu item to update the review for.
+        :return: Updated review JSON, 200 HTTP status code if successful,
+        404 if not found.
+        """
+        logger.info("PUT request received for menu_id: %s", menu_id)
+        data = request.get_json()
+        user_id = data.get('user_id')
+        if not user_id:
+            logger.error("User ID is missing in the request")
+            abort(400, message="User ID is required")
+        logger.debug("User ID from request: %s", user_id)
+        review = Review.query.filter_by(
+            menu_id=menu_id, user_id=user_id).first()
+        if not review:
+            logger.warning(
+                "Review not found for user %s and menu item %s", user_id, menu_id)
+            abort(404, message="Review not found")
+        try:
+            review_data = review_schema.load(data, partial=True)
+            logger.debug("Review data loaded for update: %s", review_data)
+        except ValidationError as err:
+            logger.error("Validation error: %s", err.messages)
+            abort(400, message=err.messages)
+        review.rating = review_data.get('rating', review.rating)
+        review.review = review_data.get('review', review.review)
+        review.created_at = review_data.get('created_at', review.created_at)
+        try:
+            db.session.commit()
+            logger.info(
+                "Review updated successfully for user %s and menu item %s", user_id, menu_id)
         except IntegrityError as e:
             logger.warning(
-                f"Integrity Error, this review is already in the database. "
-                f"Error: {e}"
-            )
-
+                "Integrity Error, could not update review. Error: %s", e)
             abort(500, message="Unexpected Error!")
-        else:
-            return review.review_id, 201
+        return review_schema.dump(review), 200
+
+    def delete(self, menu_id):
+        data = request.get_json()
+        user_id = data.get('user_id')
+        if not user_id:
+            logger.error("User ID is missing in the request")
+            abort(400, message="User ID is required")
+        logger.debug("User ID from request: %s", user_id)
+        review = Review.query.filter_by(
+            menu_id=menu_id, user_id=user_id).first()
+        if not review:
+            return {'message': 'Review not found'}, 404
+        db.session.delete(review)
+        try:
+            db.session.commit()
+            logger.info(
+                "Review deleted successfully for user %s and menu item %s", user_id, menu_id)
+        except Exception as e:
+            logger.error("Error committing to the database: %s", e)
+            db.session.rollback()
+            return {'message': 'Internal server error'}, 500
+        return {'message': 'Review deleted'}, 200

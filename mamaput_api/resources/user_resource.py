@@ -2,12 +2,14 @@ import logging
 from datetime import datetime
 import time
 import json
+from mailer import send_password_reset_email
 
 from flask import request, g
 from flask_restful import Resource, current_app, abort
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
+from itsdangerous import URLSafeTimedSerializer
 
 from database import db
 from models.role import Role
@@ -15,7 +17,6 @@ from models.user_role import UserRole
 from models.user import User
 from models.address import Address
 from schemas.user_rel_schemas import UserSchema, AddressSchema
-from schemas.role_schema import RoleSchema
 
 
 from flask_httpauth import HTTPBasicAuth
@@ -88,14 +89,10 @@ class UsersResource(Resource):
             return self.login_with_token(token)
         elif request.endpoint == "register":
             return self.register()
-        # elif request.endpoint == "assign_role":
-        #     user_id = user_data['userId']
-        #     role_name = user_data['roleName']
-        #     return self.assign_role(user_id, role_name)
-        # elif request.endpoint == "remove_role":
-        #     user_id = user_data['userId']
-        #     role_name = user_data['roleName']
-        #     return self.remove_role(user_id, role_name)
+        elif request.endpoint == "forgot_password":
+            return self.forgot_password()
+        elif request.endpoint == "reset_password":
+            return self.reset_password()
 
     def put(self):
         """
@@ -320,3 +317,54 @@ class UsersResource(Resource):
             else:
                 return False
         return False
+
+    def forgot_password(self):
+        """
+        Handle forgot password request.
+        Generate a token and send it to the user's email.
+        """
+        try:
+            data = request.get_json()
+            email = data.get('email')
+            if not email:
+                return {"message": "Email is required"}, 400
+
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                return {"message": "User not found"}, 404
+
+            serializer = URLSafeTimedSerializer(
+                current_app.config['SECRET_KEY'])
+
+            token = serializer.dumps(email, salt='password-reset-salt')
+            reset_url = f"{current_app.config['BASE_URL']}/reset-password?token={token}"
+            send_password_reset_email(email, reset_url)
+
+            return {"message": "Password reset email sent"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+
+    def reset_password(self):
+        """
+        Handle password reset using the token.
+        """
+        try:
+            data = request.get_json()
+            token = data.get('token')
+            new_password = data.get('new_password')
+            if not token or not new_password:
+                return {"message": "Token and new password are required"}, 400
+            serializer = URLSafeTimedSerializer(
+                current_app.config['SECRET_KEY'])
+            email = serializer.loads(
+                token, salt='password-reset-salt', max_age=3600)
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                return {"message": "User not found"}, 404
+
+            user.password = generate_password_hash(new_password)
+            db.session.commit()
+
+            return {"message": "Password reset successful"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500

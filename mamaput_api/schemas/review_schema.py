@@ -1,25 +1,11 @@
-from marshmallow import Schema, fields, post_load
-from models.review import Review
-from schemas.user_schema import UserSchema
-from schemas.menu_schema import MenuSchema
+from marshmallow import Schema, fields, validate
 
 
 class ReviewSchema(Schema):
-    """
-    Review Marshmallow Schema
-
-    Marshmallow schema used for loading/dumping Reviews
-    """
-
-    review_id = fields.Integer()
-    content = fields.String()
-    rating = fields.Float(allow_none=False)
-    has_reviewed = fields.Boolean(allow_none=False)
-    date_reviewed = fields.DateTime(allow_none=True)
-
-    menu = fields.Nested(UserSchema(), dump_only=True)
-    reviewer = fields.Nested(MenuSchema(), dump_only=True)
-
-    @post_load
-    def make_Review(self, data, **kwargs):
-        return Review(**data)
+    review_id = fields.Int(dump_only=True)
+    menu_id = fields.Int(required=True)
+    user_id = fields.Int(required=True)
+    rating = fields.Int(required=True, validate=validate.Range(min=1, max=5))
+    review = fields.Str()
+    created_at = fields.DateTime(dump_only=True)
+    user_names = fields.Str(required=True)

@@ -43,3 +43,9 @@ def send_order_status_update(email, order_id, status):
     subject = 'Order Status Update'
     body = f"Your order status has been updated to: {status}.\nOrder Number: #{order_id}\nBest regards, MamaPut"
     send_email(email, subject, body)
+
+
+def send_password_reset_email(email, reset_url):
+    subject = 'Password Reset Request'
+    body = f"""To reset your password, click the following link: {reset_url}\nIf you did not request a password reset, please ignore this email.\nBest regards, MamaPut"""
+    send_email(email, subject, body)
