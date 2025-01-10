@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, post_load
 from models.order import Order
-from schemas.user_schema import UserSchema
+from schemas.user_Address_schemas import UserSchema
 
 
 class OrderSchema(Schema):

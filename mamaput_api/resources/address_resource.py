@@ -8,7 +8,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from database import db
 from models.address import Address
-from schemas.address_schema import AddressSchema
+from schemas.user_Address_schemas import AddressSchema
 
 ADDRESSES_ENDPOINT = "/api/addresses"
 logger = logging.getLogger(__name__)

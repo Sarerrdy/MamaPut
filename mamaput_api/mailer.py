@@ -49,3 +49,9 @@ def send_password_reset_email(email, reset_url):
     subject = 'Password Reset Request'
     body = f"""To reset your password, click the following link: {reset_url}\nIf you did not request a password reset, please ignore this email.\nBest regards, MamaPut"""
     send_email(email, subject, body)
+
+
+def send_registration_confirmation(email, first_name):
+    subject = 'Registration Confirmation'
+    body = f"""Dear {first_name},\n\nThank you for registering. Your account has been created successfully.\n\nBest regards,\nYour Team"""
+    send_email(email, subject, body)

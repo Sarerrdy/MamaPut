@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, post_load
 from schemas.order_schema import OrderSchema
-from schemas.address_schema import AddressSchema
+from schemas.user_Address_schemas import AddressSchema
 from models.shipping_info import ShippingInfo
 
 

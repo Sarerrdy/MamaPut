@@ -5,7 +5,7 @@ from flask import request
 from flask_restful import Resource, abort, current_app
 
 # from api import mail
-from marshmallow import ValidationError
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime, timedelta
@@ -19,13 +19,9 @@ from models.user import User
 
 from schemas.order_schema import OrderSchema
 from schemas.order_details_schema import OrderDetailsSchema
-from schemas.address_schema import AddressSchema
+from schemas.user_Address_schemas import AddressSchema
 from schemas.payment_schema import PaymentSchema
 from schemas.shipping_info_schema import ShippingInfoSchema
-
-# send mails
-from email.mime.text import MIMEText
-import smtplib
 
 
 ORDERS_ENDPOINT = "/api/orders"
